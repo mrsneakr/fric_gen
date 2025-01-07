@@ -147,24 +147,34 @@ document.getElementById("downloadButton").addEventListener("click", () => {
     const rank = document.querySelector(".score-section").textContent.match(/Rank: (\d+) of \d+/)[1];
 
     html2canvas(document.getElementById("previewContainer")).then(canvas => {
-        const context = canvas.getContext("2d");
+        // Erstelle ein neues Canvas, um den zusätzlichen Text hinzuzufügen
+        const finalCanvas = document.createElement("canvas");
+        finalCanvas.width = canvas.width;
+        finalCanvas.height = canvas.height;
+        const context = finalCanvas.getContext("2d");
 
-        // Text styling
+        // Zeichne das ursprüngliche Canvas auf das neue Canvas
+        context.drawImage(canvas, 0, 0);
+
+        // Füge den Text "Rank X - Name" unten links hinzu
         context.font = "12px 'Patrick Hand'";
         context.fillStyle = "#000000";
         context.textAlign = "left";
 
-        // Add "Rank X - Name" to the bottom left of the canvas
+        // Text unten links positionieren
         const text = `Rank ${rank} - ${name}`;
-        context.fillText(text, 10, canvas.height - 10); // 10px padding from the left and bottom
+        context.fillText(text, 10, finalCanvas.height - 10);
 
-        // Create downloadable image
+        // Download des modifizierten Canvas
         const link = document.createElement("a");
-        link.href = canvas.toDataURL("image/png");
+        link.href = finalCanvas.toDataURL("image/png");
         link.download = `${name}_character.png`;
         link.click();
+    }).catch(error => {
+        console.error("Fehler beim Erstellen des Bildes:", error);
     });
 });
+
 
 
 document.getElementById("randomizeButton").addEventListener("click", randomizeCharacter);
