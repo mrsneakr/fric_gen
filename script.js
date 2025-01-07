@@ -146,39 +146,42 @@ document.getElementById("downloadButton").addEventListener("click", () => {
     const name = document.getElementById("nameInput").value.trim() || "Unnamed";
     const rank = document.querySelector(".score-section").textContent.match(/Rank: (\d+) of \d+/)[1];
 
-    html2canvas(document.getElementById("previewContainer")).then(canvas => {
-        // Erstelle ein neues Canvas mit einer höheren Auflösung
+    html2canvas(document.getElementById("previewContainer")).then(originalCanvas => {
+        // Erstelle ein neues Canvas mit der Zielauflösung
         const finalCanvas = document.createElement("canvas");
-        const scaleFactor = 1000 / canvas.width; // Berechnung des Skalierungsfaktors
-        finalCanvas.width = 1000;
-        finalCanvas.height = 1000;
+        finalCanvas.width = 1000; // Setze die Breite auf 1000px
+        finalCanvas.height = 1000; // Setze die Höhe auf 1000px
         const context = finalCanvas.getContext("2d");
 
-        // Skaliere das ursprüngliche Canvas auf die neue Auflösung
-        context.scale(scaleFactor, scaleFactor);
-        context.drawImage(canvas, 0, 0);
+        // Berechne den Skalierungsfaktor für die höhere Auflösung
+        const scaleFactor = finalCanvas.width / originalCanvas.width;
 
-        // Füge den Text "Rank X - Name" unten links hinzu (größere Schriftgröße)
-        context.setTransform(1, 0, 0, 1, 0, 0); // Zurücksetzen der Skalierung für Text
-        context.font = "24px 'Patrick Hand'"; // Schriftgröße auf 24px erhöhen
+        // Skaliere das ursprüngliche Canvas auf die neue Größe
+        context.scale(scaleFactor, scaleFactor);
+        context.drawImage(originalCanvas, 0, 0);
+
+        // Zurücksetzen der Skalierung, um Text in der richtigen Größe hinzuzufügen
+        context.setTransform(1, 0, 0, 1, 0, 0);
+
+        // Füge den Text "Rank X - Name" hinzu (unten links)
+        context.font = "24px 'Patrick Hand'"; // Größere Schriftgröße
         context.fillStyle = "#000000";
         context.textAlign = "left";
-
-        // Text unten links positionieren (angepasst an die neue Auflösung)
         const text = `Rank ${rank} - ${name}`;
-        context.fillText(text, 20, finalCanvas.height - 20);
+        context.fillText(text, 20, finalCanvas.height - 20); // Text unten links platzieren
+
+        // Erstelle den individuellen Dateinamen
+        const fileName = `Fric_${name.replace(/\s+/g, "_")}_Rank${rank}.png`;
 
         // Download des modifizierten Canvas
         const link = document.createElement("a");
         link.href = finalCanvas.toDataURL("image/png");
-        link.download = `${name}_character.png`;
+        link.download = fileName;
         link.click();
     }).catch(error => {
         console.error("Fehler beim Erstellen des Bildes:", error);
     });
 });
-
-
 
 
 document.getElementById("randomizeButton").addEventListener("click", randomizeCharacter);
