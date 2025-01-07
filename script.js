@@ -171,7 +171,7 @@ document.getElementById("downloadButton").addEventListener("click", () => {
         // Download des modifizierten Canvas
         const link = document.createElement("a");
         link.href = finalCanvas.toDataURL("image/png");
-        link.download = `${name}_character.png`;
+        link.download = fileName;
         link.click();
     }).catch(error => {
         console.error("Fehler beim Erstellen des Bildes:", error);
