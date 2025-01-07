@@ -5,6 +5,12 @@ body, h1, h2, p, button {
     box-sizing: border-box;
 }
 
+.patrick-hand-regular {
+  font-family: "Patrick Hand", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
 /* General Styles */
 body {
     font-family: 'Patrick Hand', serif;
