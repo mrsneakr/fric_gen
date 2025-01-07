@@ -157,7 +157,7 @@ document.getElementById("downloadButton").addEventListener("click", () => {
         context.drawImage(canvas, 0, 0);
 
         // Füge den Text "Rank X - Name" unten links hinzu
-        context.font = "12px 'Patrick Hand'";
+        context.font = "20px 'Patrick Hand'";
         context.fillStyle = "#000000";
         context.textAlign = "left";
 
