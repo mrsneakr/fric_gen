@@ -5,15 +5,9 @@ body, h1, h2, p, button {
     box-sizing: border-box;
 }
 
-.patrick-hand-regular {
-  font-family: "Patrick Hand", serif;
-  font-weight: 400;
-  font-style: normal;
-}
-
 /* General Styles */
 body {
-    font-family: 'Patrick Hand', serif;
+    font-family: 'Patrick Hand', sans-serif;
     background-color: #ffffff;
     color: #000000;
     display: flex;
@@ -80,8 +74,27 @@ header {
 
 .button-container {
     display: flex;
-    gap: 10px;
-    justify-content: center;
+    flex-direction: column; /* Namensfeld und Button-Container vertikal ausrichten */
+    align-items: center;
+    gap: 10px; /* Abstand zwischen Namensfeld und Button-Container */
+}
+
+.button-row {
+    display: flex; /* Buttons nebeneinander ausrichten */
+    flex-direction: row; /* Horizontale Anordnung */
+    gap: 10px; /* Abstand zwischen den Buttons */
+}
+
+#nameInput {
+    font-family: 'Patrick Hand', sans-serif;
+    font-size: 1rem;
+    padding: 10px;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+    width: 90%;
+    max-width: 280px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 button {
@@ -165,6 +178,15 @@ button {
 
 .rarity-legendary {
     color: #F1C40F;
+}
+
+/* Score Section */
+.score-section {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333333;
 }
 
 /* Footer */
