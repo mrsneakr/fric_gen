@@ -14,15 +14,12 @@
 </head>
 <body>
     <div class="main-container">
-        <!-- Header -->
         <header>
             <h1>Fric Generator</h1>
-            <p>Create your unique Fric character and check its rarity!</p>
+            <p>Create your unique Fric character and check its rarity below!</p>
         </header>
 
-        <!-- Content Section -->
         <div class="content">
-            <!-- Preview Section -->
             <div class="preview-section">
                 <div id="previewContainer">
                     <img id="background" src="background1.png" class="layer" alt="Background">
@@ -34,17 +31,16 @@
                     <img id="head" src="head1.png" class="layer" alt="Head">
                 </div>
                 <div class="button-container">
+                    <input type="text" id="nameInput" placeholder="Enter your name" maxlength="20">
                     <button id="randomizeButton">Randomize</button>
                     <button id="downloadButton">Download</button>
                 </div>
             </div>
 
-            <!-- Rarity Section -->
             <div class="rarity-section">
                 <h2>Attributes</h2>
-                <div class="attributes">
-                    <!-- Dynamically generated rarity attributes will go here -->
-                </div>
+                <div class="attributes"></div>
+                <div class="score-section"></div>
             </div>
         </div>
     </div>
