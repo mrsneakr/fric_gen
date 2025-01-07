@@ -165,6 +165,9 @@ document.getElementById("downloadButton").addEventListener("click", () => {
         const text = `Rank ${rank} - ${name}`;
         context.fillText(text, 10, finalCanvas.height - 10);
 
+        // Erstelle den individuellen Dateinamen
+        const fileName = `Fric_${name.replace(/\s+/g, "_")}_Rank${rank}.png`;
+        
         // Download des modifizierten Canvas
         const link = document.createElement("a");
         link.href = finalCanvas.toDataURL("image/png");
