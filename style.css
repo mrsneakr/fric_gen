@@ -7,7 +7,7 @@ body, h1, h2, p, button {
 
 /* General Styles */
 body {
-    font-family: 'Comic Sans MS', cursive, sans-serif;
+    font-family: 'Patrick Hand', serif;
     background-color: #ffffff;
     color: #000000;
     display: flex;
