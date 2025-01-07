@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fric Generator</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header -->
+        <header>
+            <h1>Fric Generator</h1>
+            <p>Create your unique Fric character and check its rarity!</p>
+        </header>
+
+        <!-- Content Section -->
+        <div class="content">
+            <!-- Preview Section -->
+            <div class="preview-section">
+                <div id="previewContainer">
+                    <img id="background" src="background1.png" class="layer" alt="Background">
+                    <img id="accessories" src="accessorie1.png" class="layer" alt="Accessories">
+                    <img id="body" src="body1.png" class="layer" alt="Body">
+                    <img id="mouth" src="mouth1.png" class="layer" alt="Mouth">
+                    <img id="eyes" src="eyes1.png" class="layer" alt="Eyes">
+                    <img id="arms" src="arms1.png" class="layer" alt="Arms">
+                    <img id="head" src="head1.png" class="layer" alt="Head">
+                </div>
+                <div class="button-container">
+                    <button id="randomizeButton">Randomize</button>
+                    <button id="downloadButton">Download</button>
+                </div>
+            </div>
+
+            <!-- Rarity Section -->
+            <div class="rarity-section">
+                <h2>Attributes</h2>
+                <div class="attributes">
+                    <!-- Dynamically generated rarity attributes will go here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <p>&copy; 2025 Fric Official. All rights reserved.</p>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>
