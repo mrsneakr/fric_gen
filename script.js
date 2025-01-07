@@ -157,13 +157,13 @@ document.getElementById("downloadButton").addEventListener("click", () => {
         context.drawImage(canvas, 0, 0);
 
         // Füge den Text "Rank X - Name" unten links hinzu
-        context.font = "12px 'Patrick Hand'";
+        context.font = "24px 'Patrick Hand'";
         context.fillStyle = "#000000";
         context.textAlign = "left";
 
         // Text unten links positionieren
         const text = `Rank ${rank} - ${name}`;
-        context.fillText(text, 10, finalCanvas.height - 10);
+        context.fillText(text, 20, finalCanvas.height - 20);
 
         // Erstelle den individuellen Dateinamen
         const fileName = `Fric_${name.replace(/\s+/g, "_")}_Rank${rank}.png`;
