@@ -150,15 +150,13 @@ document.getElementById("downloadButton").addEventListener("click", () => {
         const context = canvas.getContext("2d");
 
         // Text styling
-        context.font = "20px 'Patrick Hand'";
+        context.font = "12px 'Patrick Hand'";
         context.fillStyle = "#000000";
-        context.textAlign = "center";
+        context.textAlign = "left";
 
-        // Add name
-        context.fillText(`Name: ${name}`, canvas.width / 2, canvas.height - 40);
-
-        // Add rank
-        context.fillText(`Rank: ${rank}`, canvas.width / 2, canvas.height - 20);
+        // Add "Rank X - Name" to the bottom left of the canvas
+        const text = `Rank ${rank} - ${name}`;
+        context.fillText(text, 10, canvas.height - 10); // 10px padding from the left and bottom
 
         // Create downloadable image
         const link = document.createElement("a");
@@ -167,6 +165,7 @@ document.getElementById("downloadButton").addEventListener("click", () => {
         link.click();
     });
 });
+
 
 document.getElementById("randomizeButton").addEventListener("click", randomizeCharacter);
 
