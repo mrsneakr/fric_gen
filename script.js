@@ -147,23 +147,26 @@ document.getElementById("downloadButton").addEventListener("click", () => {
     const rank = document.querySelector(".score-section").textContent.match(/Rank: (\d+) of \d+/)[1];
 
     html2canvas(document.getElementById("previewContainer")).then(canvas => {
-        // Erstelle ein neues Canvas, um den zusätzlichen Text hinzuzufügen
+        // Erstelle ein neues Canvas mit einer höheren Auflösung
         const finalCanvas = document.createElement("canvas");
-        finalCanvas.width = canvas.width;
-        finalCanvas.height = canvas.height;
+        const scaleFactor = 1000 / canvas.width; // Berechnung des Skalierungsfaktors
+        finalCanvas.width = 1000;
+        finalCanvas.height = 1000;
         const context = finalCanvas.getContext("2d");
 
-        // Zeichne das ursprüngliche Canvas auf das neue Canvas
+        // Skaliere das ursprüngliche Canvas auf die neue Auflösung
+        context.scale(scaleFactor, scaleFactor);
         context.drawImage(canvas, 0, 0);
 
-        // Füge den Text "Rank X - Name" unten links hinzu
-        context.font = "20px 'Patrick Hand'";
+        // Füge den Text "Rank X - Name" unten links hinzu (größere Schriftgröße)
+        context.setTransform(1, 0, 0, 1, 0, 0); // Zurücksetzen der Skalierung für Text
+        context.font = "24px 'Patrick Hand'"; // Schriftgröße auf 24px erhöhen
         context.fillStyle = "#000000";
         context.textAlign = "left";
 
-        // Text unten links positionieren
+        // Text unten links positionieren (angepasst an die neue Auflösung)
         const text = `Rank ${rank} - ${name}`;
-        context.fillText(text, 10, finalCanvas.height - 10);
+        context.fillText(text, 20, finalCanvas.height - 20);
 
         // Download des modifizierten Canvas
         const link = document.createElement("a");
@@ -174,6 +177,7 @@ document.getElementById("downloadButton").addEventListener("click", () => {
         console.error("Fehler beim Erstellen des Bildes:", error);
     });
 });
+
 
 
 
