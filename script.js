@@ -32,6 +32,22 @@ const layers = {
     ]
 };
 
+const rarityWeights = {
+    common: 50,
+    uncommon: 30,
+    rare: 15,
+    epic: 4,
+    legendary: 1
+};
+
+const rarityPoints = {
+    common: 1,
+    uncommon: 2,
+    rare: 3,
+    epic: 4,
+    legendary: 5
+};
+
 const rarityColors = {
     common: "rarity-common",
     uncommon: "rarity-uncommon",
@@ -40,9 +56,55 @@ const rarityColors = {
     legendary: "rarity-legendary"
 };
 
+// Calculate all possible combinations for ranking
+let allCombinations = [];
+function calculateAllCombinations() {
+    const layersArray = Object.values(layers);
+
+    function combine(current, depth) {
+        if (depth === layersArray.length) {
+            const probability = current.reduce(
+                (prob, asset) => prob * (rarityWeights[asset.rarity] / 100),
+                1
+            );
+            allCombinations.push({ assets: current, probability });
+            return;
+        }
+        for (const asset of layersArray[depth]) {
+            combine([...current, asset], depth + 1);
+        }
+    }
+    combine([], 0);
+
+    // Sort combinations by probability (ascending: rarest first)
+    allCombinations.sort((a, b) => a.probability - b.probability);
+}
+
+calculateAllCombinations();
+
+function getRank(selectedAssets) {
+    const selectedCombination = Object.values(selectedAssets).map(asset => asset.src);
+    for (let i = 0; i < allCombinations.length; i++) {
+        const combination = allCombinations[i].assets.map(asset => asset.src);
+        if (JSON.stringify(selectedCombination) === JSON.stringify(combination)) {
+            return i + 1; // Rank is 1-based
+        }
+    }
+    return allCombinations.length; // Fallback (should not occur)
+}
+
 function getRandomAsset(assets) {
-    const weightedAssets = assets.flatMap(asset => Array(asset.rarity === "common" ? 50 : asset.rarity === "uncommon" ? 30 : asset.rarity === "rare" ? 15 : asset.rarity === "epic" ? 4 : 1).fill(asset));
+    const weightedAssets = assets.flatMap(asset =>
+        Array(rarityWeights[asset.rarity]).fill(asset)
+    );
     return weightedAssets[Math.floor(Math.random() * weightedAssets.length)];
+}
+
+function calculateScore(selectedAssets) {
+    return Object.values(selectedAssets).reduce(
+        (score, asset) => score + rarityPoints[asset.rarity],
+        0
+    );
 }
 
 function randomizeCharacter() {
@@ -52,10 +114,14 @@ function randomizeCharacter() {
         selectedAssets[layer] = selectedAsset;
         document.getElementById(layer).src = selectedAsset.src;
     }
-    generateRarityDisplay(selectedAssets);
+
+    const score = calculateScore(selectedAssets);
+    const rank = getRank(selectedAssets);
+
+    generateRarityDisplay(selectedAssets, score, rank);
 }
 
-function generateRarityDisplay(selectedAssets) {
+function generateRarityDisplay(selectedAssets, score, rank) {
     const rarityContainer = document.querySelector(".attributes");
     rarityContainer.innerHTML = "";
 
@@ -68,16 +134,41 @@ function generateRarityDisplay(selectedAssets) {
         `;
         rarityContainer.appendChild(rarityDiv);
     }
+
+    const scoreContainer = document.querySelector(".score-section");
+    scoreContainer.innerHTML = `
+        <div><strong>Total Score:</strong> ${score}</div>
+        <div><strong>Rank:</strong> ${rank} of ${allCombinations.length}</div>
+    `;
 }
 
-document.getElementById("randomizeButton").addEventListener("click", randomizeCharacter);
 document.getElementById("downloadButton").addEventListener("click", () => {
+    const name = document.getElementById("nameInput").value.trim() || "Unnamed";
+    const rank = document.querySelector(".score-section").textContent.match(/Rank: (\d+) of \d+/)[1];
+
     html2canvas(document.getElementById("previewContainer")).then(canvas => {
+        const context = canvas.getContext("2d");
+
+        // Text styling
+        context.font = "20px 'Patrick Hand'";
+        context.fillStyle = "#000000";
+        context.textAlign = "center";
+
+        // Add name
+        context.fillText(`Name: ${name}`, canvas.width / 2, canvas.height - 40);
+
+        // Add rank
+        context.fillText(`Rank: ${rank}`, canvas.width / 2, canvas.height - 20);
+
+        // Create downloadable image
         const link = document.createElement("a");
         link.href = canvas.toDataURL("image/png");
-        link.download = "character.png";
+        link.download = `${name}_character.png`;
         link.click();
     });
 });
 
+document.getElementById("randomizeButton").addEventListener("click", randomizeCharacter);
+
+// Initialize with a random character
 randomizeCharacter();
