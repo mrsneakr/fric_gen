@@ -56,6 +56,48 @@ const rarityColors = {
     legendary: "rarity-legendary"
 };
 
+// Firebase-Konfiguration
+const firebaseConfig = {
+  apiKey: "AIzaSyDVtb9rKrhW4qhPuEpL3bSRTEAr0i_ZrlI",
+  authDomain: "fric-generator.firebaseapp.com",
+  databaseURL: "https://fric-generator-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "fric-generator",
+  storageBucket: "fric-generator.firebasestorage.app",
+  messagingSenderId: "843112915879",
+  appId: "1:843112915879:web:714f87a5ef147470f30c82"
+};
+
+// Firebase initialisieren
+const app = firebase.initializeApp(firebaseConfig);
+const db = firebase.getDatabase(app);
+
+function updateLeaderboardFirebase(name, rank) {
+    const leaderboardRef = firebase.ref(db, "leaderboard/");
+    firebase.push(leaderboardRef, { name, rank });
+}
+
+function renderLeaderboardFirebase() {
+    const leaderboardRef = firebase.ref(db, "leaderboard/");
+    firebase.onValue(leaderboardRef, snapshot => {
+        const leaderboard = [];
+        snapshot.forEach(childSnapshot => {
+            leaderboard.push(childSnapshot.val());
+        });
+
+        // Sortiere die Rangliste und begrenze sie auf die Top 10
+        leaderboard.sort((a, b) => a.rank - b.rank).slice(0, 10);
+
+        const leaderboardList = document.getElementById("leaderboardList");
+        leaderboardList.innerHTML = leaderboard
+            .map(
+                (entry, index) =>
+                    `<li>#${index + 1}: ${entry.name} (Rank ${entry.rank})</li>`
+            )
+            .join("");
+    });
+}
+
+
 // Calculate all possible combinations for ranking
 let allCombinations = [];
 function calculateAllCombinations() {
@@ -178,63 +220,14 @@ document.getElementById("downloadButton").addEventListener("click", () => {
     });
 });
 
-// Dein ursprünglicher JavaScript-Code bleibt vollständig erhalten, mit folgendem Zusatz:
-
-// Initialisiere oder lade die Rangliste aus LocalStorage
-function getLeaderboard() {
-    const leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
-    return leaderboard;
-}
-
-function saveLeaderboard(leaderboard) {
-    localStorage.setItem("leaderboard", JSON.stringify(leaderboard));
-}
-
-function updateLeaderboard(name, rank) {
-    const leaderboard = getLeaderboard();
-
-    // Füge neuen Eintrag hinzu
-    leaderboard.push({ name, rank });
-
-    // Sortiere Rangliste nach Rank (aufsteigend) und begrenze auf Top 10
-    leaderboard.sort((a, b) => a.rank - b.rank);
-    const top10 = leaderboard.slice(0, 10);
-
-    // Speichere aktualisierte Rangliste
-    saveLeaderboard(top10);
-
-    // Aktualisiere die Anzeige
-    renderLeaderboard();
-}
-
-function renderLeaderboard() {
-    const leaderboard = getLeaderboard();
-    const leaderboardList = document.getElementById("leaderboardList");
-
-    // Lösche bestehende Einträge
-    leaderboardList.innerHTML = "";
-
-    // Füge aktuelle Rangliste hinzu
-    leaderboard.forEach((entry, index) => {
-        const li = document.createElement("li");
-        li.innerHTML = `
-            <span class="rank">#${index + 1}</span>
-            <span>${entry.name}</span>
-            <span>Rank ${entry.rank}</span>
-        `;
-        leaderboardList.appendChild(li);
-    });
-}
-
-// Hook in den Download-Button
 document.getElementById("downloadButton").addEventListener("click", () => {
     const name = document.getElementById("nameInput").value.trim();
     const rankMatch = document.querySelector(".score-section").textContent.match(/Rank: (\d+) of \d+/);
     const rank = rankMatch ? parseInt(rankMatch[1]) : null;
 
     if (name && rank) {
-        // Füge den Benutzer in die Rangliste ein
-        updateLeaderboard(name, rank);
+        // Füge den Benutzer in die Firebase-Rangliste ein
+        updateLeaderboardFirebase(name, rank);
     }
 
     const nameForImage = name || "Unnamed";
@@ -263,8 +256,8 @@ document.getElementById("downloadButton").addEventListener("click", () => {
     });
 });
 
-// Initiale Anzeige der Rangliste
-renderLeaderboard();
+// Initiale Anzeige der Firebase-Rangliste
+renderLeaderboardFirebase();
 
 
 document.getElementById("randomizeButton").addEventListener("click", randomizeCharacter);
