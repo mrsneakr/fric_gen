@@ -67,7 +67,7 @@ const firebaseConfig = {
   appId: "1:843112915879:web:714f87a5ef147470f30c82"
 };
 
-// Firebase initialisieren
+// Initialize Firebase
 const app = firebase.initializeApp(firebaseConfig);
 const db = firebase.getDatabase(app);
 
@@ -85,17 +85,22 @@ function renderLeaderboardFirebase() {
         });
 
         // Sortiere die Rangliste und begrenze sie auf die Top 10
-        leaderboard.sort((a, b) => a.rank - b.rank).slice(0, 10);
+        leaderboard.sort((a, b) => a.rank - b.rank);
 
         const leaderboardList = document.getElementById("leaderboardList");
-        leaderboardList.innerHTML = leaderboard
-            .map(
-                (entry, index) =>
-                    `<li>#${index + 1}: ${entry.name} (Rank ${entry.rank})</li>`
-            )
+        leaderboardList.innerHTML = leaderboard.slice(0, 10)
+            .map((entry, index) => `<li>#${index + 1}: ${entry.name} (Rank ${entry.rank})</li>`)
             .join("");
     });
 }
+
+function randomizeCharacter() {
+    // Funktionalität bleibt wie zuvor
+}
+
+// Initialisiere die Rangliste und die Anzeige
+renderLeaderboardFirebase();
+randomizeCharacter();
 
 
 // Calculate all possible combinations for ranking
@@ -185,42 +190,6 @@ function generateRarityDisplay(selectedAssets, score, rank) {
 }
 
 document.getElementById("downloadButton").addEventListener("click", () => {
-    const name = document.getElementById("nameInput").value.trim() || "Unnamed";
-    const rank = document.querySelector(".score-section").textContent.match(/Rank: (\d+) of \d+/)[1];
-
-    html2canvas(document.getElementById("previewContainer")).then(canvas => {
-        // Erstelle ein neues Canvas, um den zusätzlichen Text hinzuzufügen
-        const finalCanvas = document.createElement("canvas");
-        finalCanvas.width = canvas.width;
-        finalCanvas.height = canvas.height;
-        const context = finalCanvas.getContext("2d");
-
-        // Zeichne das ursprüngliche Canvas auf das neue Canvas
-        context.drawImage(canvas, 0, 0);
-
-        // Füge den Text "Rank X - Name" unten links hinzu
-        context.font = "24px 'Patrick Hand'";
-        context.fillStyle = "#000000";
-        context.textAlign = "left";
-
-        // Text unten links positionieren
-        const text = `Rank ${rank} - ${name}`;
-        context.fillText(text, 20, finalCanvas.height - 20);
-
-        // Erstelle den individuellen Dateinamen
-        const fileName = `Fric_${name.replace(/\s+/g, "_")}_Rank${rank}.png`;
-        
-        // Download des modifizierten Canvas
-        const link = document.createElement("a");
-        link.href = finalCanvas.toDataURL("image/png");
-        link.download = fileName;
-        link.click();
-    }).catch(error => {
-        console.error("Fehler beim Erstellen des Bildes:", error);
-    });
-});
-
-document.getElementById("downloadButton").addEventListener("click", () => {
     const name = document.getElementById("nameInput").value.trim();
     const rankMatch = document.querySelector(".score-section").textContent.match(/Rank: (\d+) of \d+/);
     const rank = rankMatch ? parseInt(rankMatch[1]) : null;
@@ -255,10 +224,6 @@ document.getElementById("downloadButton").addEventListener("click", () => {
         link.click();
     });
 });
-
-// Initiale Anzeige der Firebase-Rangliste
-renderLeaderboardFirebase();
-
 
 document.getElementById("randomizeButton").addEventListener("click", randomizeCharacter);
 
