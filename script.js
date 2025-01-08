@@ -1,4 +1,3 @@
-// Firebase Importe
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
@@ -10,31 +9,31 @@ const firebaseConfig = {
   projectId: "fric-generator",
   storageBucket: "fric-generator.firebasestorage.app",
   messagingSenderId: "843112915879",
-  appId: "1:843112915879:web:714f87a5ef147470f30c82"
+  appId: "1:843112915879:web:714f87a5ef147470f30c82",
 };
 
 // Firebase initialisieren
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// Layers und weitere Konfiguration
+// Layers und Wahrscheinlichkeitswerte
 const layers = {
   head: [
     { src: "head1.png", rarity: "common" },
     { src: "head2.png", rarity: "rare" },
-    { src: "head3.png", rarity: "legendary" }
+    { src: "head3.png", rarity: "legendary" },
   ],
   arms: [
     { src: "arms1.png", rarity: "uncommon" },
     { src: "arms2.png", rarity: "common" },
     { src: "arms3.png", rarity: "epic" },
-    { src: "arms4.png", rarity: "rare" }
+    { src: "arms4.png", rarity: "rare" },
   ],
   eyes: [
     { src: "eyes1.png", rarity: "common" },
     { src: "eyes2.png", rarity: "uncommon" },
     { src: "eyes3.png", rarity: "epic" },
-    { src: "eyes4.png", rarity: "legendary" }
+    { src: "eyes4.png", rarity: "legendary" },
   ],
   mouth: [
     { src: "mouth1.png", rarity: "rare" },
@@ -42,14 +41,14 @@ const layers = {
     { src: "mouth3.png", rarity: "uncommon" },
     { src: "mouth4.png", rarity: "epic" },
     { src: "mouth5.png", rarity: "legendary" },
-    { src: "mouth6.png", rarity: "common" }
+    { src: "mouth6.png", rarity: "common" },
   ],
   accessories: [
     { src: "accessorie1.png", rarity: "common" },
     { src: "accessorie2.png", rarity: "uncommon" },
     { src: "accessorie3.png", rarity: "epic" },
-    { src: "accessorie4.png", rarity: "legendary" }
-  ]
+    { src: "accessorie4.png", rarity: "legendary" },
+  ],
 };
 
 const rarityWeights = { common: 50, uncommon: 30, rare: 15, epic: 4, legendary: 1 };
@@ -59,22 +58,20 @@ const rarityColors = {
   uncommon: "rarity-uncommon",
   rare: "rarity-rare",
   epic: "rarity-epic",
-  legendary: "rarity-legendary"
+  legendary: "rarity-legendary",
 };
 
-// Funktionen für Leaderboard
+// Leaderboard-Funktionen
 function updateLeaderboard(name, rank) {
   const leaderboardRef = ref(db, "leaderboard/");
-  push(leaderboardRef, { name, rank })
-    .then(() => console.log(`Added ${name} with Rank ${rank} to leaderboard.`))
-    .catch(error => console.error("Error updating leaderboard:", error));
+  push(leaderboardRef, { name, rank });
 }
 
 function renderLeaderboard() {
   const leaderboardRef = ref(db, "leaderboard/");
-  onValue(leaderboardRef, snapshot => {
+  onValue(leaderboardRef, (snapshot) => {
     const leaderboard = [];
-    snapshot.forEach(childSnapshot => {
+    snapshot.forEach((childSnapshot) => {
       leaderboard.push(childSnapshot.val());
     });
 
@@ -87,12 +84,14 @@ function renderLeaderboard() {
   });
 }
 
-// Funktionen für zufällige Charaktererstellung
+// Funktionen für Charakter und Attribute
 function randomizeCharacter() {
   const selectedAssets = {};
   for (const layer in layers) {
     const assets = layers[layer];
-    const weightedAssets = assets.flatMap(asset => Array(rarityWeights[asset.rarity]).fill(asset));
+    const weightedAssets = assets.flatMap((asset) =>
+      Array(rarityWeights[asset.rarity]).fill(asset)
+    );
     selectedAssets[layer] = weightedAssets[Math.floor(Math.random() * weightedAssets.length)];
     document.getElementById(layer).src = selectedAssets[layer].src;
   }
@@ -107,7 +106,23 @@ function calculateScore(assets) {
 }
 
 function calculateRank(assets) {
-  return Math.floor(Math.random() * 1152) + 1;
+  // Berechnet die Wahrscheinlichkeit der aktuellen Kombination und sortiert danach
+  const probabilities = Object.values(assets).map((asset) => rarityWeights[asset.rarity] / 100);
+  const combinedProbability = probabilities.reduce((prod, prob) => prod * prob, 1);
+
+  const sortedCombinations = Object.entries(layers)
+    .reduce((acc, [layer, options]) => {
+      const layerCombinations = options.flatMap((option) =>
+        Array(rarityWeights[option.rarity]).fill(option)
+      );
+      return acc.concat(layerCombinations);
+    }, [])
+    .sort((a, b) => a.probability - b.probability);
+
+  return sortedCombinations.findIndex(
+    (combination) =>
+      combination.map((c) => c.src).join() === Object.values(assets).map((a) => a.src).join()
+  ) + 1;
 }
 
 function updateAttributes(assets, score, rank) {
@@ -123,19 +138,40 @@ function updateAttributes(assets, score, rank) {
   scoreSection.innerHTML = `<div>Total Score: ${score}</div><div>Rank: ${rank}</div>`;
 }
 
-// Eventlistener für Buttons
-document.getElementById("randomizeButton").addEventListener("click", randomizeCharacter);
-document.getElementById("downloadButton").addEventListener("click", () => {
+// Bild-Download mit Rank und Name
+function downloadCharacterImage() {
   const name = document.getElementById("nameInput").value || "Unnamed";
   const rankText = document.querySelector(".score-section").textContent.match(/Rank: (\d+)/);
   const rank = rankText ? rankText[1] : "Unknown";
 
-  if (name) {
-    updateLeaderboard(name, rank);
-    alert(`Saved ${name} with Rank ${rank} to Leaderboard!`);
-  }
-});
+  // Bild herunterladen
+  html2canvas(document.getElementById("previewContainer")).then((canvas) => {
+    const finalCanvas = document.createElement("canvas");
+    finalCanvas.width = 1000;
+    finalCanvas.height = 1000;
+    const context = finalCanvas.getContext("2d");
 
-// Initialisierung
+    context.drawImage(canvas, 0, 0, 1000, 1000);
+
+    context.font = "24px 'Patrick Hand'";
+    context.fillStyle = "#000000";
+    context.textAlign = "left";
+    context.fillText(`Rank ${rank} - ${name}`, 20, 980);
+
+    const fileName = `Fric_${name.replace(/\s+/g, "_")}_Rank${rank}.png`;
+    const link = document.createElement("a");
+    link.href = finalCanvas.toDataURL("image/png");
+    link.download = fileName;
+    link.click();
+  });
+
+  // Leaderboard aktualisieren
+  updateLeaderboard(name, rank);
+}
+
+document.getElementById("randomizeButton").addEventListener("click", randomizeCharacter);
+document.getElementById("downloadButton").addEventListener("click", downloadCharacterImage);
+
+// Initialisieren
 randomizeCharacter();
 renderLeaderboard();
