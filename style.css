@@ -23,17 +23,17 @@ header {
     margin-bottom: 20px;
 }
 
-    header h1 {
-        font-size: 2.5rem;
-        font-weight: bold;
-        color: #333333;
-    }
+header h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #333333;
+}
 
-    header p {
-        font-size: 1.2rem;
-        color: #555555;
-        margin-top: 10px;
-    }
+header p {
+    font-size: 1.2rem;
+    color: #555555;
+    margin-top: 10px;
+}
 
 /* Main Layout */
 .main-container {
@@ -72,17 +72,17 @@ header {
     height: 100%;
 }
 
+/* Button Container */
 .button-container {
     display: flex;
-    flex-direction: column; /* Namensfeld und Button-Container vertikal ausrichten */
+    flex-direction: column;
     align-items: center;
-    gap: 10px; /* Abstand zwischen Namensfeld und Button-Container */
+    gap: 10px;
 }
 
 .button-row {
-    display: flex; /* Buttons nebeneinander ausrichten */
-    flex-direction: row; /* Horizontale Anordnung */
-    gap: 10px; /* Abstand zwischen den Buttons */
+    display: flex;
+    gap: 10px;
 }
 
 #nameInput {
@@ -109,10 +109,10 @@ button {
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-    button:hover {
-        background-color: #555555;
-        transform: scale(1.05);
-    }
+button:hover {
+    background-color: #555555;
+    transform: scale(1.05);
+}
 
 /* Rarity Section */
 .rarity-section {
@@ -124,12 +124,12 @@ button {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-    .rarity-section h2 {
-        text-align: center;
-        font-size: 1.5rem;
-        color: #333333;
-        margin-bottom: 20px;
-    }
+.rarity-section h2 {
+    text-align: center;
+    font-size: 1.5rem;
+    color: #333333;
+    margin-bottom: 20px;
+}
 
 .attributes {
     display: flex;
@@ -141,7 +141,7 @@ button {
     background-color: #ffffff;
     border: 1px solid #dddddd;
     border-radius: 5px;
-    padding: 10px;
+    padding: 10px 20px;
     color: #333333;
     display: flex;
     justify-content: space-between;
@@ -149,15 +149,22 @@ button {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-    .attribute .name {
-        font-size: 1rem;
-        font-weight: bold;
-    }
+.attribute .name {
+    font-size: 1rem;
+    font-weight: bold;
+    flex: 1;
+}
 
-    .attribute .rarity {
-        font-size: 1rem;
-        font-weight: bold;
-    }
+.attribute .value {
+    flex: 2;
+    text-align: left;
+}
+
+.attribute .rarity {
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: right;
+}
 
 /* Rarity Colors */
 .rarity-common {
@@ -187,54 +194,7 @@ button {
     font-size: 1.2rem;
     font-weight: bold;
     color: #333333;
-
-    display: flex; /* Aktiviert Flexbox */
-    flex-direction: column; /* Stellt sicher, dass die Inhalte vertikal angeordnet sind */
-    align-items: center; /* Zentriert die Inhalte horizontal */
-    justify-content: center; /* Zentriert die Inhalte vertikal */
 }
-
-/* Dein ursprünglicher CSS-Code bleibt erhalten, mit folgendem Zusatz: */
-
-/* Leaderboard Styles */
-.leaderboard {
-    margin-top: 20px;
-    background-color: #f9f9f9;
-    border: 1px solid #cccccc;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    max-width: 300px;
-}
-
-.leaderboard h2 {
-    font-size: 1.5rem;
-    text-align: center;
-    margin-bottom: 10px;
-}
-
-#leaderboardList {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-#leaderboardList li {
-    font-size: 1rem;
-    padding: 5px 0;
-    border-bottom: 1px solid #cccccc;
-    display: flex;
-    justify-content: space-between;
-}
-
-#leaderboardList li:last-child {
-    border-bottom: none;
-}
-
-.rank {
-    font-weight: bold;
-}
-
 
 /* Footer */
 footer {
