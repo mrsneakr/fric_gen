@@ -56,6 +56,8 @@ const rarityColors = {
     legendary: "rarity-legendary"
 };
 
+import { initializeApp } from "firebase/app";
+
 // Firebase-Konfiguration
 const firebaseConfig = {
   apiKey: "AIzaSyDVtb9rKrhW4qhPuEpL3bSRTEAr0i_ZrlI",
