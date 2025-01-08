@@ -40,15 +40,17 @@ header p {
 .main-container {
     width: 90%;
     max-width: 1200px;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    display: flex;
+    justify-content: space-between;
     gap: 20px;
+    flex-wrap: wrap;
 }
 
 /* Preview Section */
 .preview-section {
-    grid-column: 1 / 2;
+    flex: 1;
     text-align: center;
+    max-width: 400px;
 }
 
 #previewContainer {
@@ -78,21 +80,21 @@ header p {
     gap: 10px;
 }
 
+.button-row {
+    display: flex;
+    gap: 10px;
+}
+
 #nameInput {
     font-family: 'Patrick Hand', sans-serif;
     font-size: 1rem;
     padding: 10px;
     border: 1px solid #cccccc;
     border-radius: 5px;
-    width: 100%;
+    width: 90%;
     max-width: 280px;
     text-align: center;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.button-row {
-    display: flex;
-    gap: 10px;
 }
 
 button {
@@ -114,12 +116,13 @@ button:hover {
 
 /* Rarity Section */
 .rarity-section {
-    grid-column: 2 / 3;
+    flex: 1;
     background-color: #f9f9f9;
     border: 1px solid #cccccc;
     border-radius: 10px;
     padding: 20px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
 }
 
 .rarity-section h2 {
@@ -189,12 +192,13 @@ button:hover {
 
 /* Leaderboard */
 .leaderboard {
-    grid-column: 3 / 4;
+    flex: 1;
     background-color: #f9f9f9;
     border: 1px solid #cccccc;
     border-radius: 10px;
     padding: 20px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    max-width: 300px;
 }
 
 .leaderboard h2 {
@@ -219,10 +223,6 @@ button:hover {
 
 #leaderboardList li:last-child {
     border-bottom: none;
-}
-
-.rank {
-    font-weight: bold;
 }
 
 /* Footer */
