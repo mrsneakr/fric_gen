@@ -42,15 +42,16 @@ header p {
     max-width: 1200px;
     display: flex;
     justify-content: space-between;
+    align-items: flex-start;
     gap: 20px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
 }
 
 /* Preview Section */
 .preview-section {
     flex: 1;
-    text-align: center;
     max-width: 400px;
+    text-align: center;
 }
 
 #previewContainer {
@@ -117,12 +118,12 @@ button:hover {
 /* Rarity Section */
 .rarity-section {
     flex: 1;
+    max-width: 400px;
     background-color: #f9f9f9;
     border: 1px solid #cccccc;
     border-radius: 10px;
     padding: 20px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
 }
 
 .rarity-section h2 {
@@ -192,13 +193,13 @@ button:hover {
 
 /* Leaderboard */
 .leaderboard {
-    flex: 1;
+    flex: 0.5;
+    max-width: 300px;
     background-color: #f9f9f9;
     border: 1px solid #cccccc;
     border-radius: 10px;
     padding: 20px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    max-width: 300px;
 }
 
 .leaderboard h2 {
