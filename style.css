@@ -15,7 +15,6 @@ body {
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    margin: 0;
 }
 
 /* Header */
@@ -24,34 +23,34 @@ header {
     margin-bottom: 20px;
 }
 
-header h1 {
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: #333333;
-}
+    header h1 {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #333333;
+    }
 
-header p {
-    font-size: 1.2rem;
-    color: #555555;
-    margin-top: 10px;
-}
+    header p {
+        font-size: 1.2rem;
+        color: #555555;
+        margin-top: 10px;
+    }
 
-/* Main Container */
+/* Main Layout */
 .main-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: space-between;
-    align-items: flex-start;
-    width: 95%;
+    width: 90%;
     max-width: 1200px;
 }
 
-/* Preview Section */
+.content {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
 .preview-section {
-    flex: 1 1 300px;
+    flex: 1;
     text-align: center;
-    order: 1;
 }
 
 #previewContainer {
@@ -75,14 +74,15 @@ header p {
 
 .button-container {
     display: flex;
-    flex-direction: column;
+    flex-direction: column; /* Namensfeld und Button-Container vertikal ausrichten */
     align-items: center;
-    gap: 10px;
+    gap: 10px; /* Abstand zwischen Namensfeld und Button-Container */
 }
 
 .button-row {
-    display: flex;
-    gap: 10px;
+    display: flex; /* Buttons nebeneinander ausrichten */
+    flex-direction: row; /* Horizontale Anordnung */
+    gap: 10px; /* Abstand zwischen den Buttons */
 }
 
 #nameInput {
@@ -109,28 +109,27 @@ button {
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-button:hover {
-    background-color: #555555;
-    transform: scale(1.05);
-}
+    button:hover {
+        background-color: #555555;
+        transform: scale(1.05);
+    }
 
 /* Rarity Section */
 .rarity-section {
-    flex: 1 1 300px;
+    flex: 1;
     background-color: #f9f9f9;
     border: 1px solid #cccccc;
     border-radius: 10px;
     padding: 20px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    order: 2;
 }
 
-.rarity-section h2 {
-    text-align: center;
-    font-size: 1.5rem;
-    color: #333333;
-    margin-bottom: 20px;
-}
+    .rarity-section h2 {
+        text-align: center;
+        font-size: 1.5rem;
+        color: #333333;
+        margin-bottom: 20px;
+    }
 
 .attributes {
     display: flex;
@@ -139,47 +138,79 @@ button:hover {
 }
 
 .attribute {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
     background-color: #ffffff;
     border: 1px solid #dddddd;
     border-radius: 5px;
+    padding: 10px;
+    color: #333333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.attribute .name {
+    .attribute .name {
+        font-size: 1rem;
+        font-weight: bold;
+    }
+
+    .attribute .rarity {
+        font-size: 1rem;
+        font-weight: bold;
+    }
+
+/* Rarity Colors */
+.rarity-common {
+    color: #aaaaaa;
+}
+
+.rarity-uncommon {
+    color: #27AE60;
+}
+
+.rarity-rare {
+    color: #2471A3;
+}
+
+.rarity-epic {
+    color: #7D3C98;
+}
+
+.rarity-legendary {
+    color: #F1C40F;
+}
+
+/* Score Section */
+.score-section {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 1.2rem;
     font-weight: bold;
-    flex: 1;
+    color: #333333;
+
+    display: flex; /* Aktiviert Flexbox */
+    flex-direction: column; /* Stellt sicher, dass die Inhalte vertikal angeordnet sind */
+    align-items: center; /* Zentriert die Inhalte horizontal */
+    justify-content: center; /* Zentriert die Inhalte vertikal */
 }
 
-.attribute .value {
-    flex: 2;
-    text-align: left;
-}
+/* Dein ursprünglicher CSS-Code bleibt erhalten, mit folgendem Zusatz: */
 
-.attribute .rarity {
-    flex: 1;
-    text-align: right;
-    font-weight: bold;
-}
-
-/* Leaderboard Section */
+/* Leaderboard Styles */
 .leaderboard {
-    flex: 1 1 300px;
+    margin-top: 20px;
     background-color: #f9f9f9;
     border: 1px solid #cccccc;
     border-radius: 10px;
     padding: 20px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    order: 3;
+    max-width: 300px;
 }
 
 .leaderboard h2 {
-    text-align: center;
     font-size: 1.5rem;
-    margin-bottom: 15px;
+    text-align: center;
+    margin-bottom: 10px;
 }
 
 #leaderboardList {
@@ -189,13 +220,21 @@ button:hover {
 }
 
 #leaderboardList li {
+    font-size: 1rem;
     padding: 5px 0;
-    border-bottom: 1px solid #dddddd;
+    border-bottom: 1px solid #cccccc;
+    display: flex;
+    justify-content: space-between;
 }
 
 #leaderboardList li:last-child {
     border-bottom: none;
 }
+
+.rank {
+    font-weight: bold;
+}
+
 
 /* Footer */
 footer {
@@ -203,19 +242,4 @@ footer {
     text-align: center;
     font-size: 0.9rem;
     color: #aaaaaa;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .main-container {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .preview-section,
-    .rarity-section,
-    .leaderboard {
-        flex: none;
-        width: 100%;
-    }
 }
