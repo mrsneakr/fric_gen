@@ -15,7 +15,6 @@ body {
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    padding: 20px;
 }
 
 /* Header */
@@ -24,32 +23,33 @@ header {
     margin-bottom: 20px;
 }
 
-header h1 {
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: #333333;
-}
+    header h1 {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #333333;
+    }
 
-header p {
-    font-size: 1.2rem;
-    color: #555555;
-    margin-top: 10px;
-}
+    header p {
+        font-size: 1.2rem;
+        color: #555555;
+        margin-top: 10px;
+    }
 
 /* Main Layout */
 .main-container {
     width: 90%;
     max-width: 1200px;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 20px;
 }
 
-/* Preview Section */
+.content {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
 .preview-section {
     flex: 1;
-    max-width: 400px;
     text-align: center;
 }
 
@@ -72,17 +72,17 @@ header p {
     height: 100%;
 }
 
-/* Button Container */
 .button-container {
     display: flex;
-    flex-direction: column;
+    flex-direction: column; /* Namensfeld und Button-Container vertikal ausrichten */
     align-items: center;
-    gap: 10px;
+    gap: 10px; /* Abstand zwischen Namensfeld und Button-Container */
 }
 
 .button-row {
-    display: flex;
-    gap: 10px;
+    display: flex; /* Buttons nebeneinander ausrichten */
+    flex-direction: row; /* Horizontale Anordnung */
+    gap: 10px; /* Abstand zwischen den Buttons */
 }
 
 #nameInput {
@@ -109,17 +109,10 @@ button {
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-button:hover {
-    background-color: #555555;
-    transform: scale(1.05);
-}
-
-/* Attributes and Leaderboard Section */
-.attributes-section {
-    display: flex;
-    flex: 2;
-    gap: 20px;
-}
+    button:hover {
+        background-color: #555555;
+        transform: scale(1.05);
+    }
 
 /* Rarity Section */
 .rarity-section {
@@ -131,12 +124,12 @@ button:hover {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.rarity-section h2 {
-    text-align: center;
-    font-size: 1.5rem;
-    color: #333333;
-    margin-bottom: 20px;
-}
+    .rarity-section h2 {
+        text-align: center;
+        font-size: 1.5rem;
+        color: #333333;
+        margin-bottom: 20px;
+    }
 
 .attributes {
     display: flex;
@@ -156,15 +149,15 @@ button:hover {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.attribute .name {
-    font-size: 1rem;
-    font-weight: bold;
-}
+    .attribute .name {
+        font-size: 1rem;
+        font-weight: bold;
+    }
 
-.attribute .rarity {
-    font-size: 1rem;
-    font-weight: bold;
-}
+    .attribute .rarity {
+        font-size: 1rem;
+        font-weight: bold;
+    }
 
 /* Rarity Colors */
 .rarity-common {
@@ -194,16 +187,24 @@ button:hover {
     font-size: 1.2rem;
     font-weight: bold;
     color: #333333;
+
+    display: flex; /* Aktiviert Flexbox */
+    flex-direction: column; /* Stellt sicher, dass die Inhalte vertikal angeordnet sind */
+    align-items: center; /* Zentriert die Inhalte horizontal */
+    justify-content: center; /* Zentriert die Inhalte vertikal */
 }
 
-/* Leaderboard */
+/* Dein ursprünglicher CSS-Code bleibt erhalten, mit folgendem Zusatz: */
+
+/* Leaderboard Styles */
 .leaderboard {
-    flex: 1;
+    margin-top: 20px;
     background-color: #f9f9f9;
     border: 1px solid #cccccc;
     border-radius: 10px;
     padding: 20px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    max-width: 300px;
 }
 
 .leaderboard h2 {
@@ -229,6 +230,11 @@ button:hover {
 #leaderboardList li:last-child {
     border-bottom: none;
 }
+
+.rank {
+    font-weight: bold;
+}
+
 
 /* Footer */
 footer {
