@@ -1,7 +1,8 @@
-// Firebase-Konfiguration
+// Firebase Importe
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
+// Firebase-Konfiguration
 const firebaseConfig = {
   apiKey: "AIzaSyDVtb9rKrhW4qhPuEpL3bSRTEAr0i_ZrlI",
   authDomain: "fric-generator.firebaseapp.com",
@@ -16,41 +17,41 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+// Layers und weitere Konfiguration
 const layers = {
-    head: [
-        { src: "head1.png", rarity: "common" },
-        { src: "head2.png", rarity: "rare" },
-        { src: "head3.png", rarity: "legendary" }
-    ],
-    arms: [
-        { src: "arms1.png", rarity: "uncommon" },
-        { src: "arms2.png", rarity: "common" },
-        { src: "arms3.png", rarity: "epic" },
-        { src: "arms4.png", rarity: "rare" }
-    ],
-    eyes: [
-        { src: "eyes1.png", rarity: "common" },
-        { src: "eyes2.png", rarity: "uncommon" },
-        { src: "eyes3.png", rarity: "epic" },
-        { src: "eyes4.png", rarity: "legendary" }
-    ],
-    mouth: [
-        { src: "mouth1.png", rarity: "rare" },
-        { src: "mouth2.png", rarity: "common" },
-        { src: "mouth3.png", rarity: "uncommon" },
-        { src: "mouth4.png", rarity: "epic" },
-        { src: "mouth5.png", rarity: "legendary" },
-        { src: "mouth6.png", rarity: "common" }
-    ],
-    accessories: [
-        { src: "accessorie1.png", rarity: "common" },
-        { src: "accessorie2.png", rarity: "uncommon" },
-        { src: "accessorie3.png", rarity: "epic" },
-        { src: "accessorie4.png", rarity: "legendary" }
-    ]
+  head: [
+    { src: "head1.png", rarity: "common" },
+    { src: "head2.png", rarity: "rare" },
+    { src: "head3.png", rarity: "legendary" }
+  ],
+  arms: [
+    { src: "arms1.png", rarity: "uncommon" },
+    { src: "arms2.png", rarity: "common" },
+    { src: "arms3.png", rarity: "epic" },
+    { src: "arms4.png", rarity: "rare" }
+  ],
+  eyes: [
+    { src: "eyes1.png", rarity: "common" },
+    { src: "eyes2.png", rarity: "uncommon" },
+    { src: "eyes3.png", rarity: "epic" },
+    { src: "eyes4.png", rarity: "legendary" }
+  ],
+  mouth: [
+    { src: "mouth1.png", rarity: "rare" },
+    { src: "mouth2.png", rarity: "common" },
+    { src: "mouth3.png", rarity: "uncommon" },
+    { src: "mouth4.png", rarity: "epic" },
+    { src: "mouth5.png", rarity: "legendary" },
+    { src: "mouth6.png", rarity: "common" }
+  ],
+  accessories: [
+    { src: "accessorie1.png", rarity: "common" },
+    { src: "accessorie2.png", rarity: "uncommon" },
+    { src: "accessorie3.png", rarity: "epic" },
+    { src: "accessorie4.png", rarity: "legendary" }
+  ]
 };
 
-// Wahrscheinlichkeitswerte, Punkte und Farben
 const rarityWeights = { common: 50, uncommon: 30, rare: 15, epic: 4, legendary: 1 };
 const rarityPoints = { common: 1, uncommon: 2, rare: 3, epic: 4, legendary: 5 };
 const rarityColors = {
@@ -61,7 +62,7 @@ const rarityColors = {
   legendary: "rarity-legendary"
 };
 
-// Leaderboard-Datenbank-Update
+// Funktionen für Leaderboard
 function updateLeaderboard(name, rank) {
   const leaderboardRef = ref(db, "leaderboard/");
   push(leaderboardRef, { name, rank })
@@ -69,7 +70,6 @@ function updateLeaderboard(name, rank) {
     .catch(error => console.error("Error updating leaderboard:", error));
 }
 
-// Leaderboard-Datenbank-Rendering
 function renderLeaderboard() {
   const leaderboardRef = ref(db, "leaderboard/");
   onValue(leaderboardRef, snapshot => {
@@ -87,7 +87,7 @@ function renderLeaderboard() {
   });
 }
 
-// Funktionen für zufällige Charaktererstellung und Anzeige
+// Funktionen für zufällige Charaktererstellung
 function randomizeCharacter() {
   const selectedAssets = {};
   for (const layer in layers) {
@@ -107,7 +107,7 @@ function calculateScore(assets) {
 }
 
 function calculateRank(assets) {
-  return Math.floor(Math.random() * 1152) + 1; // Beispiel
+  return Math.floor(Math.random() * 1152) + 1;
 }
 
 function updateAttributes(assets, score, rank) {
@@ -123,7 +123,7 @@ function updateAttributes(assets, score, rank) {
   scoreSection.innerHTML = `<div>Total Score: ${score}</div><div>Rank: ${rank}</div>`;
 }
 
-// Eventlistener für Randomize- und Download-Button
+// Eventlistener für Buttons
 document.getElementById("randomizeButton").addEventListener("click", randomizeCharacter);
 document.getElementById("downloadButton").addEventListener("click", () => {
   const name = document.getElementById("nameInput").value || "Unnamed";
@@ -136,6 +136,6 @@ document.getElementById("downloadButton").addEventListener("click", () => {
   }
 });
 
-// Initialisiere Seite
+// Initialisierung
 randomizeCharacter();
 renderLeaderboard();
