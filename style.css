@@ -194,6 +194,48 @@ button {
     justify-content: center; /* Zentriert die Inhalte vertikal */
 }
 
+/* Dein ursprünglicher CSS-Code bleibt erhalten, mit folgendem Zusatz: */
+
+/* Leaderboard Styles */
+.leaderboard {
+    margin-top: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #cccccc;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    max-width: 300px;
+}
+
+.leaderboard h2 {
+    font-size: 1.5rem;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+#leaderboardList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#leaderboardList li {
+    font-size: 1rem;
+    padding: 5px 0;
+    border-bottom: 1px solid #cccccc;
+    display: flex;
+    justify-content: space-between;
+}
+
+#leaderboardList li:last-child {
+    border-bottom: none;
+}
+
+.rank {
+    font-weight: bold;
+}
+
+
 /* Footer */
 footer {
     margin-top: 20px;
