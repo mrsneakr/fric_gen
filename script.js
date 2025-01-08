@@ -136,11 +136,11 @@ function downloadCharacterImage() {
   // Bild herunterladen
   html2canvas(document.getElementById("previewContainer")).then((canvas) => {
     const finalCanvas = document.createElement("canvas");
-    finalCanvas.width = 1000;
-    finalCanvas.height = 1000;
+    finalCanvas.width = canvas.width;
+    finalCanvas.height = canvas.height;
     const context = finalCanvas.getContext("2d");
 
-    context.drawImage(canvas, 0, 0, 1000, 1000);
+    context.drawImage(canvas, 0, 0);
 
     context.font = "24px 'Patrick Hand'";
     context.fillStyle = "#000000";
