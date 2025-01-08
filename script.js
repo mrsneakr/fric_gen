@@ -75,10 +75,11 @@ function renderLeaderboard() {
       leaderboard.push(childSnapshot.val());
     });
 
-    leaderboard.sort((a, b) => a.rank - b.rank).slice(0, 10);
+    leaderboard.sort((a, b) => a.rank - b.rank);
 
     const leaderboardList = document.getElementById("leaderboardList");
     leaderboardList.innerHTML = leaderboard
+      .slice(0, 10)
       .map((entry, index) => `<li>#${index + 1}: ${entry.name} (Rank ${entry.rank})</li>`)
       .join("");
   });
@@ -106,23 +107,11 @@ function calculateScore(assets) {
 }
 
 function calculateRank(assets) {
-  // Berechnet die Wahrscheinlichkeit der aktuellen Kombination und sortiert danach
   const probabilities = Object.values(assets).map((asset) => rarityWeights[asset.rarity] / 100);
   const combinedProbability = probabilities.reduce((prod, prob) => prod * prob, 1);
 
-  const sortedCombinations = Object.entries(layers)
-    .reduce((acc, [layer, options]) => {
-      const layerCombinations = options.flatMap((option) =>
-        Array(rarityWeights[option.rarity]).fill(option)
-      );
-      return acc.concat(layerCombinations);
-    }, [])
-    .sort((a, b) => a.probability - b.probability);
-
-  return sortedCombinations.findIndex(
-    (combination) =>
-      combination.map((c) => c.src).join() === Object.values(assets).map((a) => a.src).join()
-  ) + 1;
+  const rank = Math.ceil(1 / combinedProbability);
+  return rank;
 }
 
 function updateAttributes(assets, score, rank) {
