@@ -44,10 +44,11 @@ header p {
 .content {
     display: flex;
     justify-content: space-between;
+    align-items: flex-start;
     gap: 20px;
-    flex-wrap: wrap;
 }
 
+/* Preview Section */
 .preview-section {
     flex: 1;
     text-align: center;
@@ -116,12 +117,15 @@ button:hover {
 
 /* Rarity Section */
 .rarity-section {
-    flex: 1;
+    flex: 2;
     background-color: #f9f9f9;
     border: 1px solid #cccccc;
     border-radius: 10px;
     padding: 20px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
 .rarity-section h2 {
@@ -138,19 +142,17 @@ button:hover {
 }
 
 .attribute {
-    background-color: #ffffff;
-    border: 1px solid #dddddd;
-    border-radius: 5px;
-    padding: 10px 20px;
-    color: #333333;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 10px;
+    background-color: #ffffff;
+    border: 1px solid #dddddd;
+    border-radius: 5px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .attribute .name {
-    font-size: 1rem;
     font-weight: bold;
     flex: 1;
 }
@@ -161,9 +163,9 @@ button:hover {
 }
 
 .attribute .rarity {
-    font-size: 1rem;
-    font-weight: bold;
+    flex: 1;
     text-align: right;
+    font-weight: bold;
 }
 
 /* Rarity Colors */
@@ -187,13 +189,35 @@ button:hover {
     color: #F1C40F;
 }
 
-/* Score Section */
-.score-section {
-    margin-top: 20px;
+/* Leaderboard */
+.leaderboard {
+    flex: 1;
+    background-color: #f9f9f9;
+    border: 1px solid #cccccc;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.leaderboard h2 {
     text-align: center;
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #333333;
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+
+#leaderboardList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#leaderboardList li {
+    padding: 5px 0;
+    border-bottom: 1px solid #dddddd;
+}
+
+#leaderboardList li:last-child {
+    border-bottom: none;
 }
 
 /* Footer */
