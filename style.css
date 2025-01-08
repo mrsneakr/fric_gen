@@ -44,7 +44,6 @@ header p {
     justify-content: space-between;
     align-items: flex-start;
     gap: 20px;
-    flex-wrap: nowrap;
 }
 
 /* Preview Section */
@@ -115,10 +114,16 @@ button:hover {
     transform: scale(1.05);
 }
 
+/* Attributes and Leaderboard Section */
+.attributes-section {
+    display: flex;
+    flex: 2;
+    gap: 20px;
+}
+
 /* Rarity Section */
 .rarity-section {
     flex: 1;
-    max-width: 400px;
     background-color: #f9f9f9;
     border: 1px solid #cccccc;
     border-radius: 10px;
@@ -193,8 +198,7 @@ button:hover {
 
 /* Leaderboard */
 .leaderboard {
-    flex: 0.5;
-    max-width: 300px;
+    flex: 1;
     background-color: #f9f9f9;
     border: 1px solid #cccccc;
     border-radius: 10px;
