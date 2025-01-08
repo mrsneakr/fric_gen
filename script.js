@@ -1,4 +1,7 @@
 // Firebase-Konfiguration
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+
 const firebaseConfig = {
   apiKey: "AIzaSyDVtb9rKrhW4qhPuEpL3bSRTEAr0i_ZrlI",
   authDomain: "fric-generator.firebaseapp.com",
@@ -10,8 +13,8 @@ const firebaseConfig = {
 };
 
 // Firebase initialisieren
-const app = firebase.initializeApp(firebaseConfig);
-const db = firebase.getDatabase(app);
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
 const layers = {
     head: [
@@ -47,83 +50,90 @@ const layers = {
     ]
 };
 
-// Wahrscheinlichkeitswerte und Farben
+// Wahrscheinlichkeitswerte, Punkte und Farben
 const rarityWeights = { common: 50, uncommon: 30, rare: 15, epic: 4, legendary: 1 };
 const rarityPoints = { common: 1, uncommon: 2, rare: 3, epic: 4, legendary: 5 };
 const rarityColors = {
-    common: "rarity-common",
-    uncommon: "rarity-uncommon",
-    rare: "rarity-rare",
-    epic: "rarity-epic",
-    legendary: "rarity-legendary"
+  common: "rarity-common",
+  uncommon: "rarity-uncommon",
+  rare: "rarity-rare",
+  epic: "rarity-epic",
+  legendary: "rarity-legendary"
 };
 
-// Leaderboard-Funktionen
+// Leaderboard-Datenbank-Update
 function updateLeaderboard(name, rank) {
-    const leaderboardRef = firebase.ref(db, "leaderboard/");
-    firebase.push(leaderboardRef, { name, rank });
+  const leaderboardRef = ref(db, "leaderboard/");
+  push(leaderboardRef, { name, rank })
+    .then(() => console.log(`Added ${name} with Rank ${rank} to leaderboard.`))
+    .catch(error => console.error("Error updating leaderboard:", error));
 }
 
+// Leaderboard-Datenbank-Rendering
 function renderLeaderboard() {
-    const leaderboardRef = firebase.ref(db, "leaderboard/");
-    firebase.onValue(leaderboardRef, snapshot => {
-        const leaderboard = [];
-        snapshot.forEach(childSnapshot => {
-            leaderboard.push(childSnapshot.val());
-        });
-
-        leaderboard.sort((a, b) => a.rank - b.rank).slice(0, 10);
-
-        const leaderboardList = document.getElementById("leaderboardList");
-        leaderboardList.innerHTML = leaderboard
-            .map((entry, index) => `<li>#${index + 1}: ${entry.name} (Rank ${entry.rank})</li>`)
-            .join("");
+  const leaderboardRef = ref(db, "leaderboard/");
+  onValue(leaderboardRef, snapshot => {
+    const leaderboard = [];
+    snapshot.forEach(childSnapshot => {
+      leaderboard.push(childSnapshot.val());
     });
+
+    leaderboard.sort((a, b) => a.rank - b.rank).slice(0, 10);
+
+    const leaderboardList = document.getElementById("leaderboardList");
+    leaderboardList.innerHTML = leaderboard
+      .map((entry, index) => `<li>#${index + 1}: ${entry.name} (Rank ${entry.rank})</li>`)
+      .join("");
+  });
 }
 
-// Funktionen für Attribute und zufälliges Charakterdesign
+// Funktionen für zufällige Charaktererstellung und Anzeige
 function randomizeCharacter() {
-    const selectedAssets = {};
-    for (const layer in layers) {
-        const assets = layers[layer];
-        const weightedAssets = assets.flatMap(asset => Array(rarityWeights[asset.rarity]).fill(asset));
-        selectedAssets[layer] = weightedAssets[Math.floor(Math.random() * weightedAssets.length)];
-        document.getElementById(layer).src = selectedAssets[layer].src;
-    }
+  const selectedAssets = {};
+  for (const layer in layers) {
+    const assets = layers[layer];
+    const weightedAssets = assets.flatMap(asset => Array(rarityWeights[asset.rarity]).fill(asset));
+    selectedAssets[layer] = weightedAssets[Math.floor(Math.random() * weightedAssets.length)];
+    document.getElementById(layer).src = selectedAssets[layer].src;
+  }
 
-    const score = calculateScore(selectedAssets);
-    const rank = calculateRank(selectedAssets);
-    updateAttributes(selectedAssets, score, rank);
+  const score = calculateScore(selectedAssets);
+  const rank = calculateRank(selectedAssets);
+  updateAttributes(selectedAssets, score, rank);
 }
 
 function calculateScore(assets) {
-    return Object.values(assets).reduce((score, asset) => score + rarityPoints[asset.rarity], 0);
+  return Object.values(assets).reduce((score, asset) => score + rarityPoints[asset.rarity], 0);
 }
 
 function calculateRank(assets) {
-    return Math.floor(Math.random() * 1152) + 1; // Beispiel
+  return Math.floor(Math.random() * 1152) + 1; // Beispiel
 }
 
 function updateAttributes(assets, score, rank) {
-    const attributesContainer = document.querySelector(".attributes");
-    attributesContainer.innerHTML = Object.entries(assets)
-        .map(
-            ([layer, asset]) =>
-                `<div>${layer}: ${asset.src.replace(".png", "")} - <span class="${rarityColors[asset.rarity]}">${asset.rarity.toUpperCase()}</span></div>`
-        )
-        .join("");
+  const attributesContainer = document.querySelector(".attributes");
+  attributesContainer.innerHTML = Object.entries(assets)
+    .map(
+      ([layer, asset]) =>
+        `<div>${layer}: ${asset.src.replace(".png", "")} - <span class="${rarityColors[asset.rarity]}">${asset.rarity.toUpperCase()}</span></div>`
+    )
+    .join("");
 
-    const scoreSection = document.querySelector(".score-section");
-    scoreSection.innerHTML = `<div>Total Score: ${score}</div><div>Rank: ${rank}</div>`;
+  const scoreSection = document.querySelector(".score-section");
+  scoreSection.innerHTML = `<div>Total Score: ${score}</div><div>Rank: ${rank}</div>`;
 }
 
+// Eventlistener für Randomize- und Download-Button
 document.getElementById("randomizeButton").addEventListener("click", randomizeCharacter);
 document.getElementById("downloadButton").addEventListener("click", () => {
-    const name = document.getElementById("nameInput").value || "Unnamed";
-    const rankText = document.querySelector(".score-section").textContent.match(/Rank: (\d+)/);
-    const rank = rankText ? rankText[1] : "Unknown";
+  const name = document.getElementById("nameInput").value || "Unnamed";
+  const rankText = document.querySelector(".score-section").textContent.match(/Rank: (\d+)/);
+  const rank = rankText ? rankText[1] : "Unknown";
+
+  if (name) {
     updateLeaderboard(name, rank);
     alert(`Saved ${name} with Rank ${rank} to Leaderboard!`);
+  }
 });
 
 // Initialisiere Seite
