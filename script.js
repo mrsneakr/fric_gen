@@ -61,6 +61,43 @@ const rarityColors = {
   legendary: "rarity-legendary",
 };
 
+// Berechnung aller möglichen Kombinationen
+let allCombinations = [];
+function calculateAllCombinations() {
+  const layersArray = Object.values(layers);
+
+  function combine(current, depth) {
+    if (depth === layersArray.length) {
+      const probability = current.reduce(
+        (prob, asset) => prob * (rarityWeights[asset.rarity] / 100),
+        1
+      );
+      allCombinations.push({ assets: current, probability });
+      return;
+    }
+    for (const asset of layersArray[depth]) {
+      combine([...current, asset], depth + 1);
+    }
+  }
+  combine([], 0);
+
+  // Sortiere Kombinationen nach Wahrscheinlichkeit (seltenste zuerst)
+  allCombinations.sort((a, b) => a.probability - b.probability);
+}
+
+calculateAllCombinations();
+
+function getRank(selectedAssets) {
+  const selectedCombination = Object.values(selectedAssets).map((asset) => asset.src);
+  for (let i = 0; i < allCombinations.length; i++) {
+    const combination = allCombinations[i].assets.map((asset) => asset.src);
+    if (JSON.stringify(selectedCombination) === JSON.stringify(combination)) {
+      return i + 1; // 1-basierte Rangliste
+    }
+  }
+  return allCombinations.length; // Fallback
+}
+
 // Leaderboard-Funktionen
 function updateLeaderboard(name, rank) {
   const leaderboardRef = ref(db, "leaderboard/");
@@ -98,20 +135,12 @@ function randomizeCharacter() {
   }
 
   const score = calculateScore(selectedAssets);
-  const rank = calculateRank(selectedAssets);
+  const rank = getRank(selectedAssets);
   updateAttributes(selectedAssets, score, rank);
 }
 
 function calculateScore(assets) {
   return Object.values(assets).reduce((score, asset) => score + rarityPoints[asset.rarity], 0);
-}
-
-function calculateRank(assets) {
-  const probabilities = Object.values(assets).map((asset) => rarityWeights[asset.rarity] / 100);
-  const combinedProbability = probabilities.reduce((prod, prob) => prod * prob, 1);
-
-  const rank = Math.ceil(1 / combinedProbability);
-  return rank;
 }
 
 function updateAttributes(assets, score, rank) {
@@ -124,7 +153,7 @@ function updateAttributes(assets, score, rank) {
     .join("");
 
   const scoreSection = document.querySelector(".score-section");
-  scoreSection.innerHTML = `<div>Total Score: ${score}</div><div>Rank: ${rank}</div>`;
+  scoreSection.innerHTML = `<div>Total Score: ${score}</div><div>Rank: ${rank} of ${allCombinations.length}</div>`;
 }
 
 // Bild-Download mit Rank und Name
@@ -136,11 +165,11 @@ function downloadCharacterImage() {
   // Bild herunterladen
   html2canvas(document.getElementById("previewContainer")).then((canvas) => {
     const finalCanvas = document.createElement("canvas");
-    finalCanvas.width = canvas.width;
-    finalCanvas.height = canvas.height;
+    finalCanvas.width = 1000;
+    finalCanvas.height = 1000;
     const context = finalCanvas.getContext("2d");
 
-    context.drawImage(canvas, 0, 0);
+    context.drawImage(canvas, 0, 0, 1000, 1000);
 
     context.font = "24px 'Patrick Hand'";
     context.fillStyle = "#000000";
