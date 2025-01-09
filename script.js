@@ -103,7 +103,7 @@ function getRank(selectedAssets) {
 
 // Wallet-Details
 const SOLANA_NETWORK = "devnet";
-const PAYMENT_AMOUNT = 0.01; // Betrag in SOL für jeden Randomize-Vorgang
+const PAYMENT_AMOUNT = 0.001; // Betrag in SOL für jeden Randomize-Vorgang
 let walletPublicKey = null;
 
 // Funktion zur Verbindung mit Phantom Wallet
@@ -130,7 +130,7 @@ async function payWithFric() {
 
   const connection = new Connection(clusterApiUrl(SOLANA_NETWORK), "confirmed");
   const fromPublicKey = new PublicKey(walletPublicKey);
-  const toPublicKey = new PublicKey("Your_Fric_Receiver_Wallet_Address");
+  const toPublicKey = new PublicKey(6Y16GQTbeUSQga6McvkzX8JM96GUD8HYX155PmdwgBun);
 
   const transaction = new Transaction().add(
     SystemProgram.transfer({
