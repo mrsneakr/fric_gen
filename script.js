@@ -189,6 +189,44 @@ async function payWithFric() {
   }
 }
 
+// Erstellt oder findet einen Associated Token Account
+async function getOrCreateAssociatedTokenAccount(
+  connection,
+  payer,
+  mint,
+  owner
+) {
+  const associatedTokenAccount = await solanaWeb3.Token.getAssociatedTokenAddress(
+    solanaWeb3.ASSOCIATED_TOKEN_PROGRAM_ID,
+    solanaWeb3.TOKEN_PROGRAM_ID,
+    mint,
+    owner
+  );
+
+  // Prüfe, ob der Token-Account existiert
+  const accountInfo = await connection.getAccountInfo(associatedTokenAccount);
+  if (accountInfo === null) {
+    // Wenn nicht, erstelle den Token-Account
+    const transaction = new solanaWeb3.Transaction().add(
+      solanaWeb3.Token.createAssociatedTokenAccountInstruction(
+        payer,
+        associatedTokenAccount,
+        owner,
+        mint
+      )
+    );
+
+    const { blockhash } = await connection.getLatestBlockhash();
+    transaction.recentBlockhash = blockhash;
+    transaction.feePayer = payer;
+
+    const signedTransaction = await window.solana.signTransaction(transaction);
+    await connection.sendRawTransaction(signedTransaction.serialize());
+  }
+
+  return associatedTokenAccount;
+}
+
 // Globale Variable, um den aktuellen Rank zu speichern
 let currentRank = null;
 
