@@ -102,51 +102,56 @@ function getRank(selectedAssets) {
 }
 
 // Wallet-Details
-const SOLANA_NETWORK = "devnet";
-const PAYMENT_AMOUNT = 0.001; // Betrag in SOL für jeden Randomize-Vorgang
+const SOLANA_NETWORK = "devnet"; // oder 'mainnet-beta'
+const PAYMENT_AMOUNT = 0.01; // Betrag in SOL für jeden Randomize-Vorgang
 let walletPublicKey = null;
 
 // Funktion zur Verbindung mit Phantom Wallet
 async function connectWallet() {
-  if (window.solana && window.solana.isPhantom) {
-    try {
-      const response = await window.solana.connect();
+  try {
+    if (window.solana && window.solana.isPhantom) {
+      // Verbindung zur Wallet herstellen
+      const response = await window.solana.connect({ onlyIfTrusted: false });
       walletPublicKey = response.publicKey.toString();
+
+      // Erfolgreiche Verbindung anzeigen
       document.getElementById("walletAddress").innerText = `Connected: ${walletPublicKey}`;
-    } catch (err) {
-      console.error("Wallet connection failed:", err);
+      console.log("Wallet connected:", walletPublicKey);
+    } else {
+      alert("Please install the Phantom Wallet extension to use this feature.");
     }
-  } else {
-    alert("Please install the Phantom wallet extension.");
+  } catch (error) {
+    console.error("Error connecting to wallet:", error);
+    alert("Failed to connect to wallet. Please try again.");
   }
 }
 
-// Funktion für Zahlung mit Fric (via Solana)
+// Funktion für Zahlung mit Solana
 async function payWithFric() {
   if (!walletPublicKey) {
     alert("Please connect your wallet first.");
     return false;
   }
 
-  const connection = new Connection(clusterApiUrl(SOLANA_NETWORK), "confirmed");
-  const fromPublicKey = new PublicKey(walletPublicKey);
-  const toPublicKey = new PublicKey(6Y16GQTbeUSQga6McvkzX8JM96GUD8HYX155PmdwgBun);
+  const connection = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl(SOLANA_NETWORK), "confirmed");
+  const fromPublicKey = new solanaWeb3.PublicKey(walletPublicKey);
+  const toPublicKey = new solanaWeb3.PublicKey(6Y16GQTbeUSQga6McvkzX8JM96GUD8HYX155PmdwgBun);
 
-  const transaction = new Transaction().add(
-    SystemProgram.transfer({
+  const transaction = new solanaWeb3.Transaction().add(
+    solanaWeb3.SystemProgram.transfer({
       fromPubkey: fromPublicKey,
       toPubkey: toPublicKey,
-      lamports: PAYMENT_AMOUNT * 1e9, // Umrechnung SOL zu Lamports
+      lamports: solanaWeb3.LAMPORTS_PER_SOL * PAYMENT_AMOUNT,
     })
   );
 
   try {
     const { signature } = await window.solana.signAndSendTransaction(transaction);
-    await connection.confirmTransaction(signature, "confirmed");
+    console.log("Transaction signature", signature);
     alert("Payment successful! Proceeding to randomize.");
     return true;
-  } catch (err) {
-    console.error("Payment failed:", err);
+  } catch (error) {
+    console.error("Payment failed:", error);
     alert("Payment failed. Please try again.");
     return false;
   }
@@ -170,16 +175,18 @@ async function randomizeCharacter() {
     document.getElementById(layer).src = selectedAssets[layer].src;
   }
 
-  const score = calculateScore(selectedAssets);
-  currentRank = getRank(selectedAssets); // Speichere den neuen Rank in der globalen Variable
-  updateAttributes(selectedAssets, score, currentRank);
+  currentRank = calculateRank(selectedAssets);
+  updateAttributes(selectedAssets, currentRank);
 }
 
-function calculateScore(assets) {
-  return Object.values(assets).reduce((score, asset) => score + rarityPoints[asset.rarity], 0);
+function calculateRank(assets) {
+  const probabilities = Object.values(assets).map((asset) => rarityWeights[asset.rarity] / 100);
+  const combinedProbability = probabilities.reduce((prod, prob) => prod * prob, 1);
+  const rank = Math.ceil(1 / combinedProbability);
+  return rank;
 }
 
-function updateAttributes(assets, score, rank) {
+function updateAttributes(assets, rank) {
   const attributesContainer = document.querySelector(".attributes");
   attributesContainer.innerHTML = Object.entries(assets)
     .map(
@@ -193,7 +200,7 @@ function updateAttributes(assets, score, rank) {
     .join("");
 
   const scoreSection = document.querySelector(".score-section");
-  scoreSection.innerHTML = `<div>Rank: ${rank} of ${allCombinations.length}</div>`;
+  scoreSection.innerHTML = `<div>Rank: ${rank}</div>`;
 }
 
 // Bild-Download mit Rank und Name
