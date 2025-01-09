@@ -3,12 +3,10 @@ import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebas
 
 //test
 if (typeof splToken === "undefined") {
-    console.error("splToken is not defined. Please check the library loading.");
+    console.error("splToken is not loaded. Check the library script in index.html.");
 } else {
-    console.log("splToken loaded:", splToken);
+    console.log("splToken loaded successfully.");
 }
-
-console.log(splToken.getOrCreateAssociatedTokenAccount);
 
 const connection = new solanaWeb3.Connection("https://api.mainnet-beta.solana.com");
 
