@@ -1,11 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
-// Solana Web3.js CDN
-const solanaWeb3 = window.solanaWeb3; // Wird von CDN geladen
-
-const connection = new solanaWeb3.Connection("https://api.mainnet-beta.solana.com");
-
 // Firebase-Konfiguration
 const firebaseConfig = {
   apiKey: "AIzaSyDVtb9rKrhW4qhPuEpL3bSRTEAr0i_ZrlI",
@@ -20,8 +15,6 @@ const firebaseConfig = {
 // Firebase initialisieren
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-
-let walletPublicKey = null;
 
 // Layers und Wahrscheinlichkeitswerte
 const layers = {
@@ -105,121 +98,66 @@ function getRank(selectedAssets) {
   return allCombinations.length; // Fallback
 }
 
-// Prüfen, ob Phantom Wallet installiert ist
-function isPhantomInstalled() {
-  return window.solana && window.solana.isPhantom;
+// Leaderboard-Funktionen
+function updateLeaderboard(name, rank) {
+  const leaderboardRef = ref(db, "leaderboard/");
+  push(leaderboardRef, { name, rank });
 }
 
-// Verbindung zur Wallet herstellen
-async function connectWallet() {
-  if (!isPhantomInstalled()) {
-    alert("Phantom Wallet is not installed! Please install it first.");
-    return;
-  }
+function renderLeaderboard() {
+  const leaderboardRef = ref(db, "leaderboard/");
+  onValue(leaderboardRef, (snapshot) => {
+    const leaderboard = [];
+    snapshot.forEach((childSnapshot) => {
+      leaderboard.push(childSnapshot.val());
+    });
 
-  try {
-    const response = await window.solana.connect();
-    walletPublicKey = response.publicKey.toString();
-    document.getElementById("walletStatus").innerText = `Connected: ${walletPublicKey}`;
-    document.getElementById("connectWalletButton").innerText = "Wallet Connected";
-  } catch (error) {
-    console.error("Wallet connection failed:", error);
-  }
+    leaderboard.sort((a, b) => a.rank - b.rank);
+
+    const leaderboardList = document.getElementById("leaderboardList");
+    leaderboardList.innerHTML = leaderboard
+      .slice(0, 10)
+      .map((entry, index) => `<li>#${index + 1}: ${entry.name} (Rank ${entry.rank})</li>`)
+      .join("");
+  });
 }
 
-// Zahlung mit Fric (SPL-Token)
-async function payWithFric() {
-    if (!walletPublicKey) {
-        alert("Please connect your wallet first!");
-        return false;
-    }
-
-    try {
-        const recipient = new solanaWeb3.PublicKey("6Y16GQTbeUSQga6McvkzX8JM96GUD8HYX155PmdwgBun");
-        const tokenMintAddress = new solanaWeb3.PublicKey("EsP4kJfKUDLfX274WoBSiiEy74Sh4tZKUCDjfULHpump");
-
-        if (typeof splToken === "undefined") {
-            console.error("splToken is not loaded. Check the library script in index.html.");
-            return false;
-        }
-
-        // Sender's Token Account
-        const senderTokenAccount = await splToken.getOrCreateAssociatedTokenAccount(
-            connection,
-            walletPublicKey,
-            tokenMintAddress,
-            walletPublicKey
-        );
-
-        // Recipient's Token Account
-        const recipientTokenAccount = await splToken.getOrCreateAssociatedTokenAccount(
-            connection,
-            walletPublicKey,
-            tokenMintAddress,
-            recipient
-        );
-
-        const lamports = 10 * Math.pow(10, 6); // 10 Fric in Lamports
-
-        // Create Transaction
-        const transaction = new solanaWeb3.Transaction().add(
-            splToken.createTransferInstruction(
-                senderTokenAccount.address,
-                recipientTokenAccount.address,
-                walletPublicKey,
-                lamports,
-                [],
-                splToken.TOKEN_PROGRAM_ID
-            )
-        );
-
-        // Transaction setup
-        const { blockhash } = await connection.getLatestBlockhash();
-        transaction.recentBlockhash = blockhash;
-        transaction.feePayer = walletPublicKey;
-
-        // Sign and send the transaction
-        const signedTransaction = await window.solana.signTransaction(transaction);
-        const signature = await connection.sendRawTransaction(signedTransaction.serialize());
-        await connection.confirmTransaction(signature);
-
-        alert(`Transaction successful! Signature: ${signature}`);
-        return true;
-    } catch (error) {
-        console.error("Transaction failed:", error.message, error.stack);
-        alert(`Transaction failed: ${error.message}`);
-        return false;
-    }
-}
 // Globale Variable, um den aktuellen Rank zu speichern
 let currentRank = null;
 
 // Funktionen für Charakter und Attribute
-async function randomizeCharacter() {
-  const paymentSuccess = await payWithFric();
-  if (!paymentSuccess) return;
+function randomizeCharacter() {
+    // Wenn der aktuelle Rank < 500 ist, zeige eine Bestätigungsabfrage an
+    if (currentRank !== null && currentRank < 500) {
+        const confirmReset = confirm(
+            `You have achieved a rare rank of ${currentRank}. Are you sure you want to randomize and lose this rank?`
+        );
+        if (!confirmReset) {
+            // Wenn der Benutzer nicht zustimmt, breche den Vorgang ab
+            return;
+        }
+    }
 
-  const selectedAssets = {};
-  for (const layer in layers) {
-    const assets = layers[layer];
-    const weightedAssets = assets.flatMap((asset) => Array(rarityWeights[asset.rarity]).fill(asset));
-    selectedAssets[layer] = weightedAssets[Math.floor(Math.random() * weightedAssets.length)];
-    document.getElementById(layer).src = selectedAssets[layer].src;
-  }
+    const selectedAssets = {};
+    for (const layer in layers) {
+        const assets = layers[layer];
+        const weightedAssets = assets.flatMap((asset) =>
+            Array(rarityWeights[asset.rarity]).fill(asset)
+        );
+        selectedAssets[layer] = weightedAssets[Math.floor(Math.random() * weightedAssets.length)];
+        document.getElementById(layer).src = selectedAssets[layer].src;
+    }
 
-  const rank = calculateRank(selectedAssets);
-  updateAttributes(selectedAssets, rank);
+    const score = calculateScore(selectedAssets);
+    currentRank = getRank(selectedAssets); // Speichere den neuen Rank in der globalen Variable
+    updateAttributes(selectedAssets, score, currentRank);
 }
 
-function calculateRank(assets) {
-  const probabilities = Object.values(assets).map((asset) => rarityWeights[asset.rarity] / 100);
-  const combinedProbability = probabilities.reduce((prod, prob) => prod * prob, 1);
-  const rank = Math.ceil(1 / combinedProbability);
-  return rank;
+function calculateScore(assets) {
+  return Object.values(assets).reduce((score, asset) => score + rarityPoints[asset.rarity], 0);
 }
 
-// Attribut-Updates
-function updateAttributes(assets, rank) {
+function updateAttributes(assets, score, rank) {
   const attributesContainer = document.querySelector(".attributes");
   attributesContainer.innerHTML = Object.entries(assets)
     .map(
@@ -233,7 +171,7 @@ function updateAttributes(assets, rank) {
     .join("");
 
   const scoreSection = document.querySelector(".score-section");
-  scoreSection.innerHTML = `<div>Rank: ${rank}</div>`;
+  scoreSection.innerHTML = `<div>Total Score: ${score}</div><div>Rank: ${rank} of ${allCombinations.length}</div>`;
 }
 
 // Bild-Download mit Rank und Name
@@ -267,38 +205,9 @@ function downloadCharacterImage() {
   updateLeaderboard(name, rank);
 }
 
-document.getElementById("connectWalletButton").addEventListener("click", connectWallet);
-document.getElementById("downloadButton").addEventListener("click", downloadCharacterImage);
 document.getElementById("randomizeButton").addEventListener("click", randomizeCharacter);
+document.getElementById("downloadButton").addEventListener("click", downloadCharacterImage);
 
 // Initialisieren
-document.addEventListener("DOMContentLoaded", () => {
-  if (!isPhantomInstalled()) {
-    alert("Phantom Wallet is not installed!");
-  }
-});
 randomizeCharacter();
 renderLeaderboard();
-
-function updateLeaderboard(name, rank) {
-  const leaderboardRef = ref(db, "leaderboard/");
-  push(leaderboardRef, { name, rank });
-}
-
-function renderLeaderboard() {
-  const leaderboardRef = ref(db, "leaderboard/");
-  onValue(leaderboardRef, (snapshot) => {
-    const leaderboard = [];
-    snapshot.forEach((childSnapshot) => {
-      leaderboard.push(childSnapshot.val());
-    });
-
-    leaderboard.sort((a, b) => a.rank - b.rank);
-
-    const leaderboardList = document.getElementById("leaderboardList");
-    leaderboardList.innerHTML = leaderboard
-      .slice(0, 10)
-      .map((entry, index) => `<li>#${index + 1}: ${entry.name} (Rank ${entry.rank})</li>`)
-      .join("");
-  });
-}
