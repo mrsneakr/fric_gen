@@ -16,8 +16,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// Solana Web3.js für Wallet-Integration importieren
-import { Connection, clusterApiUrl, PublicKey, Transaction, SystemProgram } from "@solana/web3.js";
+const lamportsPerSol = solanaWeb3.LAMPORTS_PER_SOL;
+let walletPublicKey = null;
 
 // Layers und Wahrscheinlichkeitswerte
 const layers = {
@@ -101,57 +101,48 @@ function getRank(selectedAssets) {
   return allCombinations.length; // Fallback
 }
 
-// Wallet-Details
-const SOLANA_NETWORK = "mainnet-beta"; // Ändere auf "mainnet-beta" für die Hauptnetzwerk-Nutzung
-let walletPublicKey = null;
-
-// Funktion zur Verbindung mit Phantom Wallet
+// Verbindung zur Wallet herstellen
 async function connectWallet() {
   try {
     if (window.solana && window.solana.isPhantom) {
-      // Verbindung herstellen
       const response = await window.solana.connect();
       walletPublicKey = response.publicKey.toString();
-
-      // Erfolgreich verbunden
-      document.getElementById("walletAddress").innerText = `Wallet: ${walletPublicKey}`;
+      document.getElementById("walletStatus").innerText = `Wallet: ${walletPublicKey}`;
       console.log("Wallet verbunden:", walletPublicKey);
     } else {
-      alert("Phantom Wallet nicht gefunden! Installiere es bitte, um fortzufahren.");
+      alert("Phantom Wallet nicht gefunden! Bitte installieren und erneut versuchen.");
     }
   } catch (error) {
-    console.error("Wallet-Verbindungsfehler:", error);
-    alert("Fehler bei der Verbindung mit der Wallet. Bitte versuche es erneut.");
+    console.error("Fehler bei Wallet-Verbindung:", error);
   }
 }
 
-// Funktion für Zahlung mit Fric
-async function payWithFric() {
+// Solana-Zahlung durchführen
+async function sendPayment() {
+  const receiverAddress = 6Y16GQTbeUSQga6McvkzX8JM96GUD8HYX155PmdwgBun; // Wallet-Adresse des Empfängers
+  const amountSol = 0.01; // Beispiel: 0.01 SOL
+
   if (!walletPublicKey) {
-    alert("Bitte verbinde zuerst deine Wallet.");
-    return false;
+    alert("Bitte verbinden Sie zuerst Ihre Wallet.");
+    return;
   }
 
-  const connection = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl(SOLANA_NETWORK), "confirmed");
-  const fromPublicKey = new solanaWeb3.PublicKey(walletPublicKey);
-  const toPublicKey = new solanaWeb3.PublicKey(6Y16GQTbeUSQga6McvkzX8JM96GUD8HYX155PmdwgBun);
-
-  const transaction = new solanaWeb3.Transaction().add(
-    solanaWeb3.SystemProgram.transfer({
-      fromPubkey: fromPublicKey,
-      toPubkey: toPublicKey,
-      lamports: solanaWeb3.LAMPORTS_PER_SOL * 0.01, // Beispiel: 0.01 SOL
-    })
-  );
-
   try {
-    const { signature } = await window.solana.signAndSendTransaction(transaction);
-    console.log("Transaktionssignatur:", signature);
-    alert("Zahlung erfolgreich! Zufallscharakter wird erstellt.");
+    const transaction = new solanaWeb3.Transaction().add(
+      solanaWeb3.SystemProgram.transfer({
+        fromPubkey: new solanaWeb3.PublicKey(walletPublicKey),
+        toPubkey: new solanaWeb3.PublicKey(receiverAddress),
+        lamports: lamportsPerSol * amountSol,
+      })
+    );
+
+    const signature = await window.solana.signAndSendTransaction(transaction);
+    console.log("Transaktion erfolgreich:", signature);
+    alert("Zahlung erfolgreich durchgeführt!");
     return true;
   } catch (error) {
-    console.error("Zahlung fehlgeschlagen:", error);
-    alert("Zahlung fehlgeschlagen. Bitte versuche es erneut.");
+    console.error("Fehler bei der Zahlung:", error);
+    alert("Zahlung fehlgeschlagen. Bitte erneut versuchen.");
     return false;
   }
 }
