@@ -186,8 +186,6 @@ async function payWithFric() {
     }
 }
 
-console.log("splToken available:", splToken !== undefined);
-
 // Globale Variable, um den aktuellen Rank zu speichern
 let currentRank = null;
 
