@@ -1,163 +1,245 @@
 /* General Reset */
-* {
+body, h1, h2, p, button {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Global Styles */
+/* General Styles */
 body {
-    font-family: 'Vividly', sans-serif;
+    font-family: 'Patrick Hand', sans-serif;
     background-color: #ffffff;
     color: #000000;
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
+    min-height: 100vh;
 }
 
 /* Header */
-.custom-header {
+header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+    header h1 {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #333333;
+    }
+
+    header p {
+        font-size: 1.2rem;
+        color: #555555;
+        margin-top: 10px;
+    }
+
+/* Main Layout */
+.main-container {
+    width: 90%;
+    max-width: 1200px;
+}
+
+.content {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-    background-color: #ffffff;
-    border-bottom: 2px solid #000000;
-    width: 100%;
-    position: fixed;
-    top: 0;
-    z-index: 1000;
+    gap: 20px;
+    flex-wrap: wrap;
 }
 
-.contract-address {
-    display: flex;
-    align-items: center;
-    font-size: 18px;
-    gap: 10px;
-    cursor: pointer;
-}
-
-.contract-address .logo {
-    width: 24px;
-    height: 24px;
-}
-
-.social-links img {
-    width: 24px;
-    height: 24px;
-    cursor: pointer;
-    transition: transform 0.2s;
-}
-
-.social-links img:hover {
-    transform: scale(1.1);
-}
-
-/* Main Content */
-.main-content {
-    margin-top: 80px; /* Pushes content below fixed header */
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 40px;
-    padding: 20px;
-}
-
-/* Intro Section */
-.intro-section {
+.preview-section {
+    flex: 1;
     text-align: center;
-    padding: 20px 0;
-}
-
-.main-title {
-    font-size: 36px;
-    font-weight: bold;
-}
-
-.subtitle {
-    font-size: 18px;
-    color: #666666;
-    margin-top: 10px;
-}
-
-/* Generator Section */
-.generator-container {
-    display: flex;
-    gap: 40px;
-    justify-content: center;
-    align-items: flex-start;
 }
 
 #previewContainer {
     position: relative;
     width: 300px;
     height: 300px;
+    margin: 0 auto 20px;
     background-color: #f5f5f5;
     border: 1px solid #cccccc;
     border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
 }
 
 .button-container {
     display: flex;
-    flex-direction: column;
+    flex-direction: column; /* Namensfeld und Button-Container vertikal ausrichten */
     align-items: center;
-    gap: 20px;
+    gap: 10px; /* Abstand zwischen Namensfeld und Button-Container */
+}
+
+.button-row {
+    display: flex; /* Buttons nebeneinander ausrichten */
+    flex-direction: row; /* Horizontale Anordnung */
+    gap: 10px; /* Abstand zwischen den Buttons */
 }
 
 #nameInput {
-    font-size: 18px;
+    font-family: 'Patrick Hand', sans-serif;
+    font-size: 1rem;
     padding: 10px;
     border: 1px solid #cccccc;
     border-radius: 5px;
+    width: 90%;
+    max-width: 280px;
     text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 button {
-    font-size: 16px;
-    padding: 10px 20px;
-    cursor: pointer;
-    border: 2px solid #000000;
-    background-color: #ffffff;
-    transition: transform 0.2s ease, background-color 0.3s ease;
-}
-
-button:hover {
-    background-color: #555555;
+    background-color: #333333;
     color: #ffffff;
-    transform: scale(1.05);
+    font-size: 1rem;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-/* Attributes Section */
-.attributes-section,
-.leaderboard-section {
-    width: 90%;
-    max-width: 800px;
-    text-align: center;
-    margin-top: 20px;
+    button:hover {
+        background-color: #555555;
+        transform: scale(1.05);
+    }
+
+/* Rarity Section */
+.rarity-section {
+    flex: 1;
+    background-color: #f9f9f9;
+    border: 1px solid #cccccc;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
+
+    .rarity-section h2 {
+        text-align: center;
+        font-size: 1.5rem;
+        color: #333333;
+        margin-bottom: 20px;
+    }
 
 .attributes {
     display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    justify-content: center;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .attribute {
-    border: 1px solid #cccccc;
+    background-color: #ffffff;
+    border: 1px solid #dddddd;
     border-radius: 5px;
     padding: 10px;
-    font-size: 16px;
-    text-align: center;
+    color: #333333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
+
+    .attribute .name {
+        font-size: 1rem;
+        font-weight: bold;
+    }
+
+    .attribute .rarity {
+        font-size: 1rem;
+        font-weight: bold;
+    }
+
+/* Rarity Colors */
+.rarity-common {
+    color: #aaaaaa;
+}
+
+.rarity-uncommon {
+    color: #27AE60;
+}
+
+.rarity-rare {
+    color: #2471A3;
+}
+
+.rarity-epic {
+    color: #7D3C98;
+}
+
+.rarity-legendary {
+    color: #F1C40F;
+}
+
+/* Score Section */
+.score-section {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333333;
+
+    display: flex; /* Aktiviert Flexbox */
+    flex-direction: column; /* Stellt sicher, dass die Inhalte vertikal angeordnet sind */
+    align-items: center; /* Zentriert die Inhalte horizontal */
+    justify-content: center; /* Zentriert die Inhalte vertikal */
+}
+
+/* Dein ursprünglicher CSS-Code bleibt erhalten, mit folgendem Zusatz: */
+
+/* Leaderboard Styles */
+.leaderboard {
+    margin-top: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #cccccc;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    max-width: 300px;
+}
+
+.leaderboard h2 {
+    font-size: 1.5rem;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+#leaderboardList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#leaderboardList li {
+    font-size: 1rem;
+    padding: 5px 0;
+    border-bottom: 1px solid #cccccc;
+    display: flex;
+    justify-content: space-between;
+}
+
+#leaderboardList li:last-child {
+    border-bottom: none;
+}
+
+.rank {
+    font-weight: bold;
+}
+
 
 /* Footer */
 footer {
-    margin-top: 40px;
-    font-size: 14px;
-    color: #aaaaaa;
+    margin-top: 20px;
     text-align: center;
+    font-size: 0.9rem;
+    color: #aaaaaa;
 }
