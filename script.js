@@ -29,7 +29,6 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 let walletPublicKey = null;
-const connection = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl("mainnet-beta"), "confirmed");
 
 // Layers und Wahrscheinlichkeitswerte
 const layers = {
