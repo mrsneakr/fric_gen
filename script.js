@@ -128,66 +128,65 @@ async function connectWallet() {
 
 // Zahlung mit Fric (SPL-Token)
 async function payWithFric() {
-  if (!walletPublicKey) {
-    alert("Please connect your wallet first!");
-    return false;
-  }
+    if (!walletPublicKey) {
+        alert("Please connect your wallet first!");
+        return false;
+    }
 
-  try {
-    // Adresse des Empfängers und des Fric-Tokens
-    const recipient = new solanaWeb3.PublicKey("6Y16GQTbeUSQga6McvkzX8JM96GUD8HYX155PmdwgBun"); // Wallet-Adresse, die Fric empfängt
-    const tokenMintAddress = new solanaWeb3.PublicKey("EsP4kJfKUDLfX274WoBSiiEy74Sh4tZKUCDjfULHpump"); // Fric-Token Mint-Adresse
+    try {
+        const recipient = new solanaWeb3.PublicKey("6Y16GQTbeUSQga6McvkzX8JM96GUD8HYX155PmdwgBun");
+        const tokenMintAddress = new solanaWeb3.PublicKey("EsP4kJfKUDLfX274WoBSiiEy74Sh4tZKUCDjfULHpump");
 
-    // Erstelle eine Verbindung zu Solana
-    const senderPublicKey = new solanaWeb3.PublicKey(walletPublicKey);
+        // Sender's Token Account
+        const senderTokenAccount = await splToken.getOrCreateAssociatedTokenAccount(
+            connection,
+            walletPublicKey,
+            tokenMintAddress,
+            walletPublicKey
+        );
 
-    // Token-Account des Senders und des Empfängers finden
-    const senderTokenAccount = await getOrCreateAssociatedTokenAccount(
-      connection,
-      senderPublicKey,
-      tokenMintAddress,
-      senderPublicKey
-    );
-    const recipientTokenAccount = await getOrCreateAssociatedTokenAccount(
-      connection,
-      senderPublicKey,
-      tokenMintAddress,
-      recipient
-    );
+        // Recipient's Token Account
+        const recipientTokenAccount = await splToken.getOrCreateAssociatedTokenAccount(
+            connection,
+            walletPublicKey,
+            tokenMintAddress,
+            recipient
+        );
 
-    // Überweisungsbetrag (10 Fric in Lamports)
-    const amount = 10 * Math.pow(10, 6); // Fric hat 6 Dezimalstellen
+        const lamports = 10 * Math.pow(10, 6); // 10 Fric in Lamports
 
-    // Erstelle die Transaktion
-    const transaction = new solanaWeb3.Transaction().add(
-      solanaWeb3.Token.createTransferInstruction(
-        solanaWeb3.TOKEN_PROGRAM_ID,
-        senderTokenAccount.address,
-        recipientTokenAccount.address,
-        senderPublicKey,
-        [],
-        amount
-      )
-    );
+        // Create Transaction
+        const transaction = new solanaWeb3.Transaction().add(
+            splToken.createTransferInstruction(
+                senderTokenAccount.address,
+                recipientTokenAccount.address,
+                walletPublicKey,
+                lamports,
+                [],
+                splToken.TOKEN_PROGRAM_ID
+            )
+        );
 
-    // Füge Blockhash und FeePayer hinzu
-    const { blockhash } = await connection.getLatestBlockhash();
-    transaction.recentBlockhash = blockhash;
-    transaction.feePayer = senderPublicKey;
+        // Transaction setup
+        const { blockhash } = await connection.getLatestBlockhash();
+        transaction.recentBlockhash = blockhash;
+        transaction.feePayer = walletPublicKey;
 
-    // Signiere und sende die Transaktion
-    const signedTransaction = await window.solana.signTransaction(transaction);
-    const signature = await connection.sendRawTransaction(signedTransaction.serialize());
-    await connection.confirmTransaction(signature);
+        // Sign and send the transaction
+        const signedTransaction = await window.solana.signTransaction(transaction);
+        const signature = await connection.sendRawTransaction(signedTransaction.serialize());
+        await connection.confirmTransaction(signature);
 
-    alert(`Transaction successful! Signature: ${signature}`);
-    return true;
-  } catch (error) {
-    console.error("Transaction failed:", error);
-    alert("Transaction failed. Please try again.");
-    return false;
-  }
+        alert(`Transaction successful! Signature: ${signature}`);
+        return true;
+    } catch (error) {
+        console.error("Transaction failed:", error.message, error.stack);
+        alert(`Transaction failed: ${error.message}`);
+        return false;
+    }
 }
+
+console.log("splToken available:", splToken !== undefined);
 
 // Globale Variable, um den aktuellen Rank zu speichern
 let currentRank = null;
