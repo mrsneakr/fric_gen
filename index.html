@@ -5,27 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fric Generator</title>
     <link rel="stylesheet" href="style.css">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
 
-    <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.70.0/lib/index.iife.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@solana/spl-token@0.3.5/lib/index.iife.min.js"></script>
+    <!-- Das Skript mit type="module" -->
     <script type="module" src="script.js"></script>
     
     <!-- Html2Canvas zur Unterstützung des Downloads -->
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-
 </head>
 <body>
-    <header>
-        <h1>Fric Generator</h1>
-        <p>Create your unique Fric character and check its rarity below!</p>
-        <button id="connectWalletButton" class="wallet-button">Connect Wallet</button>
-         <p id="walletStatus" class="wallet-status">Not Connected</p>
-    </header>
-
     <div class="main-container">
+        <header>
+            <h1>Fric Generator</h1>
+            <p>Create your unique Fric character and check its rarity below!</p>
+        </header>
+
         <div class="content">
             <div class="preview-section">
                 <div id="previewContainer">
@@ -54,12 +51,15 @@
 
             <div class="leaderboard">
                 <h2>Leaderboard</h2>
-                <ul id="leaderboardList"></ul>
+                <ul id="leaderboardList">
+                    <!-- Ranglisten-Einträge werden hier dynamisch eingefügt -->
+                </ul>
             </div>
         </div>
     </div>
     <footer>
         <p>&copy; 2025 Fric Official. All rights reserved.</p>
     </footer>
+    <script src="script.js"></script>
 </body>
 </html>
