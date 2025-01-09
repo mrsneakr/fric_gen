@@ -35,23 +35,27 @@ header p {
     margin-top: 10px;
 }
 
-#connectWalletButton {
-  background-color: #4caf50;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+/* Wallet Button Styles */
+.wallet-button {
+    background-color: #28a745;
+    color: white;
+    font-size: 1rem;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
 }
 
-#connectWalletButton:hover {
-  background-color: #45a049;
+.wallet-button:hover {
+    background-color: #218838;
 }
 
 #walletStatus {
-  margin-top: 10px;
+    font-size: 0.9rem;
+    color: #555;
+    margin-top: 10px;
 }
-
 /* Main Layout */
 .main-container {
     width: 90%;
