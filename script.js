@@ -16,6 +16,9 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+// Solana Web3.js für Wallet-Integration importieren
+import { Connection, clusterApiUrl, PublicKey, Transaction, SystemProgram } from "@solana/web3.js";
+
 // Layers und Wahrscheinlichkeitswerte
 const layers = {
   head: [
@@ -98,59 +101,78 @@ function getRank(selectedAssets) {
   return allCombinations.length; // Fallback
 }
 
-// Leaderboard-Funktionen
-function updateLeaderboard(name, rank) {
-  const leaderboardRef = ref(db, "leaderboard/");
-  push(leaderboardRef, { name, rank });
+// Wallet-Details
+const SOLANA_NETWORK = "devnet";
+const PAYMENT_AMOUNT = 0.01; // Betrag in SOL für jeden Randomize-Vorgang
+let walletPublicKey = null;
+
+// Funktion zur Verbindung mit Phantom Wallet
+async function connectWallet() {
+  if (window.solana && window.solana.isPhantom) {
+    try {
+      const response = await window.solana.connect();
+      walletPublicKey = response.publicKey.toString();
+      document.getElementById("walletAddress").innerText = `Connected: ${walletPublicKey}`;
+    } catch (err) {
+      console.error("Wallet connection failed:", err);
+    }
+  } else {
+    alert("Please install the Phantom wallet extension.");
+  }
 }
 
-function renderLeaderboard() {
-  const leaderboardRef = ref(db, "leaderboard/");
-  onValue(leaderboardRef, (snapshot) => {
-    const leaderboard = [];
-    snapshot.forEach((childSnapshot) => {
-      leaderboard.push(childSnapshot.val());
-    });
+// Funktion für Zahlung mit Fric (via Solana)
+async function payWithFric() {
+  if (!walletPublicKey) {
+    alert("Please connect your wallet first.");
+    return false;
+  }
 
-    leaderboard.sort((a, b) => a.rank - b.rank);
+  const connection = new Connection(clusterApiUrl(SOLANA_NETWORK), "confirmed");
+  const fromPublicKey = new PublicKey(walletPublicKey);
+  const toPublicKey = new PublicKey("Your_Fric_Receiver_Wallet_Address");
 
-    const leaderboardList = document.getElementById("leaderboardList");
-    leaderboardList.innerHTML = leaderboard
-      .slice(0, 10)
-      .map((entry, index) => `<li>#${index + 1}: ${entry.name} (Rank ${entry.rank})</li>`)
-      .join("");
-  });
+  const transaction = new Transaction().add(
+    SystemProgram.transfer({
+      fromPubkey: fromPublicKey,
+      toPubkey: toPublicKey,
+      lamports: PAYMENT_AMOUNT * 1e9, // Umrechnung SOL zu Lamports
+    })
+  );
+
+  try {
+    const { signature } = await window.solana.signAndSendTransaction(transaction);
+    await connection.confirmTransaction(signature, "confirmed");
+    alert("Payment successful! Proceeding to randomize.");
+    return true;
+  } catch (err) {
+    console.error("Payment failed:", err);
+    alert("Payment failed. Please try again.");
+    return false;
+  }
 }
 
 // Globale Variable, um den aktuellen Rank zu speichern
 let currentRank = null;
 
 // Funktionen für Charakter und Attribute
-function randomizeCharacter() {
-    // Wenn der aktuelle Rank < 500 ist, zeige eine Bestätigungsabfrage an
-    if (currentRank !== null && currentRank < 500) {
-        const confirmReset = confirm(
-            `You have achieved a rare rank of ${currentRank}. Are you sure you want to randomize and lose this rank?`
-        );
-        if (!confirmReset) {
-            // Wenn der Benutzer nicht zustimmt, breche den Vorgang ab
-            return;
-        }
-    }
+async function randomizeCharacter() {
+  const paymentSuccess = await payWithFric();
+  if (!paymentSuccess) return;
 
-    const selectedAssets = {};
-    for (const layer in layers) {
-        const assets = layers[layer];
-        const weightedAssets = assets.flatMap((asset) =>
-            Array(rarityWeights[asset.rarity]).fill(asset)
-        );
-        selectedAssets[layer] = weightedAssets[Math.floor(Math.random() * weightedAssets.length)];
-        document.getElementById(layer).src = selectedAssets[layer].src;
-    }
+  const selectedAssets = {};
+  for (const layer in layers) {
+    const assets = layers[layer];
+    const weightedAssets = assets.flatMap((asset) =>
+      Array(rarityWeights[asset.rarity]).fill(asset)
+    );
+    selectedAssets[layer] = weightedAssets[Math.floor(Math.random() * weightedAssets.length)];
+    document.getElementById(layer).src = selectedAssets[layer].src;
+  }
 
-    const score = calculateScore(selectedAssets);
-    currentRank = getRank(selectedAssets); // Speichere den neuen Rank in der globalen Variable
-    updateAttributes(selectedAssets, score, currentRank);
+  const score = calculateScore(selectedAssets);
+  currentRank = getRank(selectedAssets); // Speichere den neuen Rank in der globalen Variable
+  updateAttributes(selectedAssets, score, currentRank);
 }
 
 function calculateScore(assets) {
@@ -171,7 +193,7 @@ function updateAttributes(assets, score, rank) {
     .join("");
 
   const scoreSection = document.querySelector(".score-section");
-  scoreSection.innerHTML = `<div>Total Score: ${score}</div><div>Rank: ${rank} of ${allCombinations.length}</div>`;
+  scoreSection.innerHTML = `<div>Rank: ${rank} of ${allCombinations.length}</div>`;
 }
 
 // Bild-Download mit Rank und Name
@@ -205,9 +227,33 @@ function downloadCharacterImage() {
   updateLeaderboard(name, rank);
 }
 
+document.getElementById("connectWalletButton").addEventListener("click", connectWallet);
 document.getElementById("randomizeButton").addEventListener("click", randomizeCharacter);
 document.getElementById("downloadButton").addEventListener("click", downloadCharacterImage);
 
 // Initialisieren
 randomizeCharacter();
 renderLeaderboard();
+
+function updateLeaderboard(name, rank) {
+  const leaderboardRef = ref(db, "leaderboard/");
+  push(leaderboardRef, { name, rank });
+}
+
+function renderLeaderboard() {
+  const leaderboardRef = ref(db, "leaderboard/");
+  onValue(leaderboardRef, (snapshot) => {
+    const leaderboard = [];
+    snapshot.forEach((childSnapshot) => {
+      leaderboard.push(childSnapshot.val());
+    });
+
+    leaderboard.sort((a, b) => a.rank - b.rank);
+
+    const leaderboardList = document.getElementById("leaderboardList");
+    leaderboardList.innerHTML = leaderboard
+      .slice(0, 10)
+      .map((entry, index) => `<li>#${index + 1}: ${entry.name} (Rank ${entry.rank})</li>`)
+      .join("");
+  });
+}
