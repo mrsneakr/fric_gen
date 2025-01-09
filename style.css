@@ -35,6 +35,23 @@ header p {
     margin-top: 10px;
 }
 
+#connectWalletButton {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#connectWalletButton:hover {
+  background-color: #45a049;
+}
+
+#walletStatus {
+  margin-top: 10px;
+}
+
 /* Main Layout */
 .main-container {
     width: 90%;
@@ -111,29 +128,6 @@ button {
 button:hover {
     background-color: #555555;
     transform: scale(1.05);
-}
-
-/* Wallet Connection Button */
-#connectWalletButton {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    font-size: 16px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin: 10px 0;
-}
-
-#connectWalletButton:hover {
-    background-color: #45a049;
-}
-
-#walletAddress {
-    font-size: 0.9rem;
-    color: #555;
-    margin-top: 10px;
-    text-align: center;
 }
 
 /* Rarity Section */
