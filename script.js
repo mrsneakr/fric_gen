@@ -126,7 +126,7 @@ async function connectWallet() {
   }
 }
 
-// Zahlung mit Fric
+// Zahlung mit Fric (SPL-Token)
 async function payWithFric() {
   if (!walletPublicKey) {
     alert("Please connect your wallet first!");
@@ -134,21 +134,48 @@ async function payWithFric() {
   }
 
   try {
-    const recipient = new solanaWeb3.PublicKey("6Y16GQTbeUSQga6McvkzX8JM96GUD8HYX155PmdwgBun"); // Ersetzen!
-    const lamports = 100000; // 0.0001 SOL
+    // Adresse des Empfängers und des Fric-Tokens
+    const recipient = new solanaWeb3.PublicKey("6Y16GQTbeUSQga6McvkzX8JM96GUD8HYX155PmdwgBun"); // Wallet-Adresse, die Fric empfängt
+    const tokenMintAddress = new solanaWeb3.PublicKey("EsP4kJfKUDLfX274WoBSiiEy74Sh4tZKUCDjfULHpump"); // Fric-Token Mint-Adresse
 
-    const transaction = new solanaWeb3.Transaction().add(
-      solanaWeb3.SystemProgram.transfer({
-        fromPubkey: new solanaWeb3.PublicKey(walletPublicKey),
-        toPubkey: recipient,
-        lamports: lamports,
-      })
+    // Erstelle eine Verbindung zu Solana
+    const senderPublicKey = new solanaWeb3.PublicKey(walletPublicKey);
+
+    // Token-Account des Senders und des Empfängers finden
+    const senderTokenAccount = await getOrCreateAssociatedTokenAccount(
+      connection,
+      senderPublicKey,
+      tokenMintAddress,
+      senderPublicKey
+    );
+    const recipientTokenAccount = await getOrCreateAssociatedTokenAccount(
+      connection,
+      senderPublicKey,
+      tokenMintAddress,
+      recipient
     );
 
+    // Überweisungsbetrag (10 Fric in Lamports)
+    const amount = 10 * Math.pow(10, 6); // Fric hat 6 Dezimalstellen
+
+    // Erstelle die Transaktion
+    const transaction = new solanaWeb3.Transaction().add(
+      solanaWeb3.Token.createTransferInstruction(
+        solanaWeb3.TOKEN_PROGRAM_ID,
+        senderTokenAccount.address,
+        recipientTokenAccount.address,
+        senderPublicKey,
+        [],
+        amount
+      )
+    );
+
+    // Füge Blockhash und FeePayer hinzu
     const { blockhash } = await connection.getLatestBlockhash();
     transaction.recentBlockhash = blockhash;
-    transaction.feePayer = new solanaWeb3.PublicKey(walletPublicKey);
+    transaction.feePayer = senderPublicKey;
 
+    // Signiere und sende die Transaktion
     const signedTransaction = await window.solana.signTransaction(transaction);
     const signature = await connection.sendRawTransaction(signedTransaction.serialize());
     await connection.confirmTransaction(signature);
