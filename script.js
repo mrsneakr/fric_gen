@@ -130,7 +130,7 @@ function randomizeCharacter() {
     // Wenn der aktuelle Rank < 500 ist, zeige eine Bestätigungsabfrage an
     if (currentRank !== null && currentRank < 500) {
         const confirmReset = confirm(
-            `You have a high rank of ${currentRank} (rarer). Are you sure you want to randomize and lose this rank?`
+            `You have a high rank of ${currentRank}. Are you sure you want to randomize and lose this rank?`
         );
         if (!confirmReset) {
             // Wenn der Benutzer nicht zustimmt, breche den Vorgang ab
@@ -161,8 +161,7 @@ function calculateRank(assets) {
     const probabilities = Object.values(assets).map((asset) => rarityWeights[asset.rarity] / 100);
     const combinedProbability = probabilities.reduce((prod, prob) => prod * prob, 1);
 
-    // Umkehrung der Ränge: 1 ist der seltenste, größere Zahlen sind häufiger
-    const rank = Math.ceil(allCombinations.length * combinedProbability);
+    const rank = Math.ceil(1 / combinedProbability);
     return rank;
 }
 
