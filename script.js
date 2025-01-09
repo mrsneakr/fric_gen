@@ -123,38 +123,72 @@ function renderLeaderboard() {
 }
 
 // Funktionen für Charakter und Attribute
-function randomizeCharacter() {
-  const selectedAssets = {};
-  for (const layer in layers) {
-    const assets = layers[layer];
-    const weightedAssets = assets.flatMap((asset) =>
-      Array(rarityWeights[asset.rarity]).fill(asset)
-    );
-    selectedAssets[layer] = weightedAssets[Math.floor(Math.random() * weightedAssets.length)];
-    document.getElementById(layer).src = selectedAssets[layer].src;
-  }
+// Globale Variable, um den aktuellen Rank zu speichern
+let currentRank = null;
 
-  const score = calculateScore(selectedAssets);
-  const rank = getRank(selectedAssets);
-  updateAttributes(selectedAssets, score, rank);
+// Funktionen für Charakter und Attribute
+function randomizeCharacter() {
+    // Wenn der aktuelle Rank < 500 ist, zeige eine Bestätigungsabfrage an
+    if (currentRank !== null && currentRank < 500) {
+        const confirmReset = confirm(
+            `You have a high rank of ${currentRank}. Are you sure you want to randomize and lose this rank?`
+        );
+        if (!confirmReset) {
+            // Wenn der Benutzer nicht zustimmt, breche den Vorgang ab
+            return;
+        }
+    }
+
+    const selectedAssets = {};
+    for (const layer in layers) {
+        const assets = layers[layer];
+        const weightedAssets = assets.flatMap((asset) =>
+            Array(rarityWeights[asset.rarity]).fill(asset)
+        );
+        selectedAssets[layer] = weightedAssets[Math.floor(Math.random() * weightedAssets.length)];
+        document.getElementById(layer).src = selectedAssets[layer].src;
+    }
+
+    const score = calculateScore(selectedAssets);
+    currentRank = calculateRank(selectedAssets); // Speichere den neuen Rank in der globalen Variable
+    updateAttributes(selectedAssets, score, currentRank);
 }
 
 function calculateScore(assets) {
-  return Object.values(assets).reduce((score, asset) => score + rarityPoints[asset.rarity], 0);
+    return Object.values(assets).reduce((score, asset) => score + rarityPoints[asset.rarity], 0);
+}
+
+function calculateRank(assets) {
+    const probabilities = Object.values(assets).map((asset) => rarityWeights[asset.rarity] / 100);
+    const combinedProbability = probabilities.reduce((prod, prob) => prod * prob, 1);
+
+    const rank = Math.ceil(1 / combinedProbability);
+    return rank;
 }
 
 function updateAttributes(assets, score, rank) {
-  const attributesContainer = document.querySelector(".attributes");
-  attributesContainer.innerHTML = Object.entries(assets)
-    .map(
-      ([layer, asset]) =>
-        `<div>${layer}: ${asset.src.replace(".png", "")} - <span class="${rarityColors[asset.rarity]}">${asset.rarity.toUpperCase()}</span></div>`
-    )
-    .join("");
+    const attributesContainer = document.querySelector(".attributes");
+    attributesContainer.innerHTML = Object.entries(assets)
+        .map(
+            ([layer, asset]) =>
+                `<div class="attribute">
+                    <div class="name">${layer}</div>
+                    <div class="value">${asset.src.replace(".png", "")}</div>
+                    <div class="rarity ${rarityColors[asset.rarity]}">${asset.rarity.toUpperCase()}</div>
+                </div>`
+        )
+        .join("");
 
-  const scoreSection = document.querySelector(".score-section");
-  scoreSection.innerHTML = `<div>Total Score: ${score}</div><div>Rank: ${rank} of ${allCombinations.length}</div>`;
+    const scoreSection = document.querySelector(".score-section");
+    scoreSection.innerHTML = `<div>Total Score: ${score}</div><div>Rank: ${rank} of ${allCombinations.length}</div>`;
 }
+
+document.getElementById("randomizeButton").addEventListener("click", randomizeCharacter);
+document.getElementById("downloadButton").addEventListener("click", downloadCharacterImage);
+
+// Initialisieren
+randomizeCharacter();
+renderLeaderboard();
 
 // Bild-Download mit Rank und Name
 function downloadCharacterImage() {
