@@ -102,34 +102,33 @@ function getRank(selectedAssets) {
 }
 
 // Wallet-Details
-const SOLANA_NETWORK = "devnet"; // oder 'mainnet-beta'
-const PAYMENT_AMOUNT = 0.01; // Betrag in SOL für jeden Randomize-Vorgang
+const SOLANA_NETWORK = "devnet"; // Ändere auf "mainnet-beta" für die Hauptnetzwerk-Nutzung
 let walletPublicKey = null;
 
 // Funktion zur Verbindung mit Phantom Wallet
 async function connectWallet() {
   try {
     if (window.solana && window.solana.isPhantom) {
-      // Verbindung zur Wallet herstellen
-      const response = await window.solana.connect({ onlyIfTrusted: false });
+      // Verbindung herstellen
+      const response = await window.solana.connect();
       walletPublicKey = response.publicKey.toString();
 
-      // Erfolgreiche Verbindung anzeigen
-      document.getElementById("walletAddress").innerText = `Connected: ${walletPublicKey}`;
-      console.log("Wallet connected:", walletPublicKey);
+      // Erfolgreich verbunden
+      document.getElementById("walletAddress").innerText = `Wallet: ${walletPublicKey}`;
+      console.log("Wallet verbunden:", walletPublicKey);
     } else {
-      alert("Please install the Phantom Wallet extension to use this feature.");
+      alert("Phantom Wallet nicht gefunden! Installiere es bitte, um fortzufahren.");
     }
   } catch (error) {
-    console.error("Error connecting to wallet:", error);
-    alert("Failed to connect to wallet. Please try again.");
+    console.error("Wallet-Verbindungsfehler:", error);
+    alert("Fehler bei der Verbindung mit der Wallet. Bitte versuche es erneut.");
   }
 }
 
-// Funktion für Zahlung mit Solana
+// Funktion für Zahlung mit Fric
 async function payWithFric() {
   if (!walletPublicKey) {
-    alert("Please connect your wallet first.");
+    alert("Bitte verbinde zuerst deine Wallet.");
     return false;
   }
 
@@ -141,18 +140,18 @@ async function payWithFric() {
     solanaWeb3.SystemProgram.transfer({
       fromPubkey: fromPublicKey,
       toPubkey: toPublicKey,
-      lamports: solanaWeb3.LAMPORTS_PER_SOL * PAYMENT_AMOUNT,
+      lamports: solanaWeb3.LAMPORTS_PER_SOL * 0.01, // Beispiel: 0.01 SOL
     })
   );
 
   try {
     const { signature } = await window.solana.signAndSendTransaction(transaction);
-    console.log("Transaction signature", signature);
-    alert("Payment successful! Proceeding to randomize.");
+    console.log("Transaktionssignatur:", signature);
+    alert("Zahlung erfolgreich! Zufallscharakter wird erstellt.");
     return true;
   } catch (error) {
-    console.error("Payment failed:", error);
-    alert("Payment failed. Please try again.");
+    console.error("Zahlung fehlgeschlagen:", error);
+    alert("Zahlung fehlgeschlagen. Bitte versuche es erneut.");
     return false;
   }
 }
