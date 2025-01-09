@@ -102,7 +102,7 @@ function getRank(selectedAssets) {
 }
 
 // Wallet-Details
-const SOLANA_NETWORK = "devnet"; // Ändere auf "mainnet-beta" für die Hauptnetzwerk-Nutzung
+const SOLANA_NETWORK = "mainnet-beta"; // Ändere auf "mainnet-beta" für die Hauptnetzwerk-Nutzung
 let walletPublicKey = null;
 
 // Funktion zur Verbindung mit Phantom Wallet
