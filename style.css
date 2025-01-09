@@ -1,23 +1,23 @@
 /* General Reset */
-body, h1, h2, p, button {
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* General Styles */
+/* Global Styles */
 body {
-    font-family: 'Vividly', sans-serif; /* Applied globally */
+    font-family: 'Vividly', sans-serif;
     background-color: #ffffff;
     color: #000000;
     display: flex;
     flex-direction: column;
+    min-height: 100vh;
     align-items: center;
     justify-content: center;
-    min-height: 100vh;
 }
 
-/* Custom Header */
+/* Header Styles */
 .custom-header {
     display: flex;
     justify-content: space-between;
@@ -25,20 +25,16 @@ body {
     padding: 10px 20px;
     background-color: #ffffff;
     border-bottom: 2px solid #000000;
-    position: relative;
+    width: 100%;
+    position: fixed;
+    top: 0;
 }
 
-/* Contract Address */
 .contract-address {
     display: flex;
     align-items: center;
     cursor: pointer;
-    font-family: 'Vividly', sans-serif;
-    font-style: normal;
-    font-weight: 400;
-    font-size: 24px; /* Matches the CA */
-    line-height: 19px;
-    color: #000000;
+    font-size: 20px;
     gap: 10px;
 }
 
@@ -47,231 +43,89 @@ body {
     height: 24px;
 }
 
-/* Social Links */
-.social-links {
-    display: flex;
-    gap: 15px;
-}
-
-.social-links a img {
+.social-links img {
     width: 24px;
     height: 24px;
     cursor: pointer;
     transition: transform 0.2s;
 }
 
-.social-links a img:hover {
+.social-links img:hover {
     transform: scale(1.1);
 }
 
-/* Main Layout */
-.main-container {
-    width: 90%;
-    max-width: 1200px;
-}
-
-.content {
+/* Main Content */
+.main-content {
+    margin-top: 80px;
     display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+    padding: 0 20px;
+    width: 100%;
 }
 
-.preview-section {
-    flex: 1;
+.intro-section {
     text-align: center;
+    gap: 20px;
+}
+
+.main-title {
+    font-size: 48px;
+    font-weight: bold;
+}
+
+.subtitle {
+    font-size: 24px;
+    color: #666;
+}
+
+.evolution-icons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.evolution-icons img {
+    width: 40px;
+    height: 40px;
+}
+
+.cta-button {
+    margin-top: 20px;
+    font-size: 24px;
+    padding: 10px 20px;
+    border: 2px solid #000000;
+    background-color: #ffffff;
+    cursor: pointer;
+}
+
+.generator-container {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
 }
 
 #previewContainer {
     position: relative;
     width: 300px;
     height: 300px;
-    margin: 0 auto 20px;
     background-color: #f5f5f5;
-    border: 1px solid #cccccc;
+    border: 1px solid #ccc;
     border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.layer {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
-
-.button-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-}
-
-.button-row {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-}
-
-#nameInput {
-    font-family: 'Vividly', sans-serif; /* Adjusted font */
-    font-size: 18px; /* Matches aesthetic */
-    padding: 10px;
-    border: 1px solid #cccccc;
-    border-radius: 5px;
-    width: 90%;
-    max-width: 280px;
-    text-align: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 button {
-    background-color: #333333;
-    color: #ffffff;
-    font-family: 'Vividly', sans-serif; /* Matches theme */
     font-size: 18px;
     padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
     cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-button:hover {
-    background-color: #555555;
-    transform: scale(1.05);
-}
-
-/* Rarity Section */
-.rarity-section {
-    flex: 1;
-    background-color: #f9f9f9;
-    border: 1px solid #cccccc;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    font-family: 'Vividly', sans-serif; /* Consistent font */
-}
-
-.rarity-section h2 {
+.attributes-section,
+.leaderboard-section {
+    width: 80%;
+    max-width: 800px;
     text-align: center;
-    font-size: 1.5rem;
-    color: #333333;
-    margin-bottom: 20px;
-}
-
-.attributes {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.attribute {
-    background-color: #ffffff;
-    border: 1px solid #dddddd;
-    border-radius: 5px;
-    padding: 10px;
-    color: #333333;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    font-family: 'Vividly', sans-serif;
-}
-
-.attribute .name {
-    font-size: 18px;
-    font-weight: bold;
-}
-
-.attribute .rarity {
-    font-size: 18px;
-    font-weight: bold;
-}
-
-/* Rarity Colors */
-.rarity-common {
-    color: #aaaaaa;
-}
-
-.rarity-uncommon {
-    color: #27AE60;
-}
-
-.rarity-rare {
-    color: #2471A3;
-}
-
-.rarity-epic {
-    color: #7D3C98;
-}
-
-.rarity-legendary {
-    color: #F1C40F;
-}
-
-/* Score Section */
-.score-section {
-    margin-top: 20px;
-    text-align: center;
-    font-size: 20px;
-    font-family: 'Vividly', sans-serif;
-    font-weight: bold;
-    color: #333333;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-/* Leaderboard Styles */
-.leaderboard {
-    margin-top: 20px;
-    background-color: #f9f9f9;
-    border: 1px solid #cccccc;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    max-width: 300px;
-}
-
-.leaderboard h2 {
-    font-family: 'Vividly', sans-serif; /* Applied font */
-    font-size: 1.5rem;
-    text-align: center;
-    margin-bottom: 10px;
-}
-
-#leaderboardList {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-#leaderboardList li {
-    font-size: 18px;
-    font-family: 'Vividly', sans-serif;
-    padding: 5px 0;
-    border-bottom: 1px solid #cccccc;
-    display: flex;
-    justify-content: space-between;
-}
-
-#leaderboardList li:last-child {
-    border-bottom: none;
-}
-
-.rank {
-    font-weight: bold;
-}
-
-/* Footer */
-footer {
-    margin-top: 20px;
-    text-align: center;
-    font-size: 18px;
-    font-family: 'Vividly', sans-serif; /* Applied font */
-    color: #aaaaaa;
 }
