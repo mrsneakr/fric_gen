@@ -134,7 +134,7 @@ async function payWithFric() {
   }
 
   try {
-    const recipient = new solanaWeb3.PublicKey(6Y16GQTbeUSQga6McvkzX8JM96GUD8HYX155PmdwgBun); // Ersetzen!
+    const recipient = new solanaWeb3.PublicKey("6Y16GQTbeUSQga6McvkzX8JM96GUD8HYX155PmdwgBun"); // Ersetzen!
     const lamports = 100000; // 0.0001 SOL
 
     const transaction = new solanaWeb3.Transaction().add(
