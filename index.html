@@ -6,6 +6,10 @@
     <title>Fric Generator</title>
     <link rel="stylesheet" href="style.css">
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+
     <!-- Das Skript mit type="module" -->
     <script type="module" src="script.js"></script>
     
@@ -13,40 +17,15 @@
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 </head>
 <body>
-    <!-- Header -->
-    <header class="custom-header">
-        <div class="contract-address" onclick="copyToClipboard('EsP4kJfKUDLfX274WoBSiiEy74Sh4tZKUCDjfULHpump')">
-            <img src="images/ca.png" alt="Contract Address Logo" class="logo">
-            CA: EsP4kJfKUDLfX274WoBSiiEy74Sh4tZKUCDjfULHpump
-        </div>
-        <div class="social-links">
-            <a href="https://x.com/fricthefrog" target="_blank">
-                <img src="images/x.png" alt="Twitter Logo">
-            </a>
-            <a href="https://dexscreener.com/solana/9il89qfbtmwygtawzgikl2j6asbryx7xsm5epucoq5fk" target="_blank">
-                <img src="images/dex.png" alt="Dexscreener Logo">
-            </a>
-            <a href="https://www.instagram.com/dric/" target="_blank">
-                <img src="images/ig.png" alt="Instagram Logo">
-            </a>
-            <a href="https://t.me/fric_fric" target="_blank">
-                <img src="images/tlg.png" alt="Telegram Logo">
-            </a>
-        </div>
-    </header>
+    <div class="main-container">
+        <header>
+            <h1>Fric Generator</h1>
+            <p>Create your unique Fric character and check its rarity below!</p>
+        </header>
 
-    <!-- Main Content -->
-    <main class="main-content">
-        <!-- Intro Section -->
-        <section class="intro-section">
-            <h1 class="main-title">Fric Generator</h1>
-            <p class="subtitle">Create your unique Fric character and check its rarity below!</p>
-        </section>
-
-        <!-- Generator Section -->
-        <section class="generator-section">
-            <div class="generator-container">
-                <div id="previewContainer" class="preview">
+        <div class="content">
+            <div class="preview-section">
+                <div id="previewContainer">
                     <img id="background" src="background1.png" class="layer" alt="Background">
                     <img id="accessories" src="accessorie1.png" class="layer" alt="Accessories">
                     <img id="body" src="body1.png" class="layer" alt="Body">
@@ -63,27 +42,24 @@
                     </div>
                 </div>
             </div>
-        </section>
 
-        <!-- Attributes Section -->
-        <section class="attributes-section">
-            <h2>Attributes</h2>
-            <div class="attributes"></div>
-            <div class="score-section"></div>
-        </section>
+            <div class="rarity-section">
+                <h2>Attributes</h2>
+                <div class="attributes"></div>
+                <div class="score-section"></div>
+            </div>
 
-        <!-- Leaderboard Section -->
-        <section class="leaderboard-section">
-            <h2>Leaderboard</h2>
-            <ul id="leaderboardList">
-                <!-- Ranglisten-Einträge werden hier dynamisch eingefügt -->
-            </ul>
-        </section>
-    </main>
-
-    <!-- Footer -->
+            <div class="leaderboard">
+                <h2>Leaderboard</h2>
+                <ul id="leaderboardList">
+                    <!-- Ranglisten-Einträge werden hier dynamisch eingefügt -->
+                </ul>
+            </div>
+        </div>
+    </div>
     <footer>
         <p>&copy; 2025 Fric Official. All rights reserved.</p>
     </footer>
+    <script src="script.js"></script>
 </body>
 </html>
