@@ -1,17 +1,10 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
-//test
-if (typeof splToken === "undefined") {
-    console.error("splToken is not loaded. Check the library script in index.html.");
-} else {
-    console.log("splToken loaded successfully.");
-}
-
-const connection = new solanaWeb3.Connection("https://api.mainnet-beta.solana.com");
-
 // Solana Web3.js CDN
 const solanaWeb3 = window.solanaWeb3; // Wird von CDN geladen
+
+const connection = new solanaWeb3.Connection("https://api.mainnet-beta.solana.com");
 
 // Firebase-Konfiguration
 const firebaseConfig = {
@@ -145,6 +138,11 @@ async function payWithFric() {
         const recipient = new solanaWeb3.PublicKey("6Y16GQTbeUSQga6McvkzX8JM96GUD8HYX155PmdwgBun");
         const tokenMintAddress = new solanaWeb3.PublicKey("EsP4kJfKUDLfX274WoBSiiEy74Sh4tZKUCDjfULHpump");
 
+        if (typeof splToken === "undefined") {
+            console.error("splToken is not loaded. Check the library script in index.html.");
+            return false;
+        }
+
         // Sender's Token Account
         const senderTokenAccount = await splToken.getOrCreateAssociatedTokenAccount(
             connection,
@@ -193,7 +191,6 @@ async function payWithFric() {
         return false;
     }
 }
-
 // Globale Variable, um den aktuellen Rank zu speichern
 let currentRank = null;
 
