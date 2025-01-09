@@ -1,6 +1,8 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
-import { Connection, Transaction } from "@solana/web3.js";
+
+// Solana Web3.js CDN
+const solanaWeb3 = window.solanaWeb3; // Wird von CDN geladen
 
 // Firebase-Konfiguration
 const firebaseConfig = {
@@ -17,8 +19,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-const lamportsPerSol = solanaWeb3.LAMPORTS_PER_SOL;
 let walletPublicKey = null;
+const connection = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl("mainnet-beta"), "confirmed");
 
 // Layers und Wahrscheinlichkeitswerte
 const layers = {
@@ -102,62 +104,62 @@ function getRank(selectedAssets) {
   return allCombinations.length; // Fallback
 }
 
-const networkUrl = "https://api.mainnet-beta.solana.com";
-const connection = new Connection(networkUrl);
-let walletAddress = null;
-
-const connectWalletButton = document.getElementById("connectWalletButton");
-const walletStatus = document.getElementById("walletStatus");
+// Prüfen, ob Phantom Wallet installiert ist
+function isPhantomInstalled() {
+  return window.solana && window.solana.isPhantom;
+}
 
 // Verbindung zur Wallet herstellen
 async function connectWallet() {
-    try {
-        const provider = window.solana;
-        if (!provider) {
-            alert("Phantom Wallet is not installed. Please install it first!");
-            return;
-        }
+  if (!isPhantomInstalled()) {
+    alert("Phantom Wallet is not installed! Please install it first.");
+    return;
+  }
 
-        const response = await provider.connect();
-        walletAddress = response.publicKey.toString();
-        walletStatus.textContent = `Connected: ${walletAddress}`;
-        connectWalletButton.textContent = "Wallet Connected";
-        connectWalletButton.disabled = true;
-    } catch (error) {
-        console.error("Wallet connection failed:", error);
-    }
+  try {
+    const response = await window.solana.connect();
+    walletPublicKey = response.publicKey.toString();
+    document.getElementById("walletStatus").innerText = `Connected: ${walletPublicKey}`;
+    document.getElementById("connectWalletButton").innerText = "Wallet Connected";
+  } catch (error) {
+    console.error("Wallet connection failed:", error);
+  }
 }
 
-connectWalletButton.addEventListener("click", connectWallet);
-
+// Zahlung mit Fric
 async function payWithFric() {
-    if (!walletAddress) {
-        alert("Please connect your wallet first!");
-        return;
-    }
+  if (!walletPublicKey) {
+    alert("Please connect your wallet first!");
+    return false;
+  }
 
-    try {
-        const transaction = new Transaction();
-        // Replace with your actual recipient address and amount
-        const recipientAddress = "RecipientPublicKeyHere";
-        const lamports = 100000; // Amount to transfer in lamports
+  try {
+    const recipient = new solanaWeb3.PublicKey("YOUR_RECIPIENT_WALLET_PUBLIC_KEY"); // Ersetzen!
+    const lamports = 100000; // 0.0001 SOL
 
-        transaction.add(
-            SystemProgram.transfer({
-                fromPubkey: walletAddress,
-                toPubkey: recipientAddress,
-                lamports: lamports,
-            })
-        );
+    const transaction = new solanaWeb3.Transaction().add(
+      solanaWeb3.SystemProgram.transfer({
+        fromPubkey: new solanaWeb3.PublicKey(walletPublicKey),
+        toPubkey: recipient,
+        lamports: lamports,
+      })
+    );
 
-        const signedTransaction = await window.solana.signTransaction(transaction);
-        const signature = await connection.sendRawTransaction(signedTransaction.serialize());
+    const { blockhash } = await connection.getLatestBlockhash();
+    transaction.recentBlockhash = blockhash;
+    transaction.feePayer = new solanaWeb3.PublicKey(walletPublicKey);
 
-        alert(`Transaction sent: ${signature}`);
-    } catch (error) {
-        console.error("Transaction failed:", error);
-        alert("Transaction failed. Please try again.");
-    }
+    const signedTransaction = await window.solana.signTransaction(transaction);
+    const signature = await connection.sendRawTransaction(signedTransaction.serialize());
+    await connection.confirmTransaction(signature);
+
+    alert(`Transaction successful! Signature: ${signature}`);
+    return true;
+  } catch (error) {
+    console.error("Transaction failed:", error);
+    alert("Transaction failed. Please try again.");
+    return false;
+  }
 }
 
 // Globale Variable, um den aktuellen Rank zu speichern
@@ -171,15 +173,13 @@ async function randomizeCharacter() {
   const selectedAssets = {};
   for (const layer in layers) {
     const assets = layers[layer];
-    const weightedAssets = assets.flatMap((asset) =>
-      Array(rarityWeights[asset.rarity]).fill(asset)
-    );
+    const weightedAssets = assets.flatMap((asset) => Array(rarityWeights[asset.rarity]).fill(asset));
     selectedAssets[layer] = weightedAssets[Math.floor(Math.random() * weightedAssets.length)];
     document.getElementById(layer).src = selectedAssets[layer].src;
   }
 
-  currentRank = calculateRank(selectedAssets);
-  updateAttributes(selectedAssets, currentRank);
+  const rank = calculateRank(selectedAssets);
+  updateAttributes(selectedAssets, rank);
 }
 
 function calculateRank(assets) {
@@ -189,6 +189,7 @@ function calculateRank(assets) {
   return rank;
 }
 
+// Attribut-Updates
 function updateAttributes(assets, rank) {
   const attributesContainer = document.querySelector(".attributes");
   attributesContainer.innerHTML = Object.entries(assets)
@@ -239,13 +240,14 @@ function downloadCharacterImage() {
 
 document.getElementById("connectWalletButton").addEventListener("click", connectWallet);
 document.getElementById("downloadButton").addEventListener("click", downloadCharacterImage);
-
-document.getElementById("randomizeButton").addEventListener("click", () => {
-    payWithFric(); // Charge before randomization
-    randomizeCharacter();
-});
+document.getElementById("randomizeButton").addEventListener("click", randomizeCharacter);
 
 // Initialisieren
+document.addEventListener("DOMContentLoaded", () => {
+  if (!isPhantomInstalled()) {
+    alert("Phantom Wallet is not installed!");
+  }
+});
 randomizeCharacter();
 renderLeaderboard();
 
