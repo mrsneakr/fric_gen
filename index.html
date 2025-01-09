@@ -13,6 +13,7 @@
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 </head>
 <body>
+    <!-- Header -->
     <header class="custom-header">
         <div class="contract-address" onclick="copyToClipboard('EsP4kJfKUDLfX274WoBSiiEy74Sh4tZKUCDjfULHpump')">
             <img src="images/ca.png" alt="Contract Address Logo" class="logo">
@@ -34,22 +35,16 @@
         </div>
     </header>
 
+    <!-- Main Content -->
     <main class="main-content">
+        <!-- Intro Section -->
         <section class="intro-section">
-            <h1 class="main-title">$fric</h1>
-            <p class="subtitle">By Dric</p>
-            <div class="evolution-icons">
-                <img src="images/frog-evolution1.png" alt="Tadpole">
-                <img src="images/frog-evolution2.png" alt="Small Frog">
-                <img src="images/frog-evolution3.png" alt="Medium Frog">
-                <img src="images/frog-evolution4.png" alt="Large Frog">
-            </div>
-            <button class="cta-button">Make the Leap</button>
+            <h1 class="main-title">Fric Generator</h1>
+            <p class="subtitle">Create your unique Fric character and check its rarity below!</p>
         </section>
 
+        <!-- Generator Section -->
         <section class="generator-section">
-            <h2>Fric Generator</h2>
-            <p>Create your unique Fric character and check its rarity below!</p>
             <div class="generator-container">
                 <div id="previewContainer" class="preview">
                     <img id="background" src="background1.png" class="layer" alt="Background">
@@ -70,12 +65,14 @@
             </div>
         </section>
 
+        <!-- Attributes Section -->
         <section class="attributes-section">
             <h2>Attributes</h2>
             <div class="attributes"></div>
             <div class="score-section"></div>
         </section>
 
+        <!-- Leaderboard Section -->
         <section class="leaderboard-section">
             <h2>Leaderboard</h2>
             <ul id="leaderboardList">
@@ -84,6 +81,7 @@
         </section>
     </main>
 
+    <!-- Footer -->
     <footer>
         <p>&copy; 2025 Fric Official. All rights reserved.</p>
     </footer>
