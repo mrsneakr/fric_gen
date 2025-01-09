@@ -17,12 +17,17 @@
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 </head>
 <body>
-    <div class="main-container">
-        <header>
-            <h1>Fric Generator</h1>
-            <p>Create your unique Fric character and check its rarity below!</p>
-        </header>
+    <header>
+        <h1>Fric Generator</h1>
+        <p>Create your unique Fric character and check its rarity below!</p>
+    </header>
 
+    <div class="wallet-section">
+        <button id="connectWalletButton">Connect Wallet</button>
+        <p id="walletAddress">Not Connected</p>
+    </div>
+
+    <div class="main-container">
         <div class="content">
             <div class="preview-section">
                 <div id="previewContainer">
@@ -51,15 +56,12 @@
 
             <div class="leaderboard">
                 <h2>Leaderboard</h2>
-                <ul id="leaderboardList">
-                    <!-- Ranglisten-Einträge werden hier dynamisch eingefügt -->
-                </ul>
+                <ul id="leaderboardList"></ul>
             </div>
         </div>
     </div>
     <footer>
         <p>&copy; 2025 Fric Official. All rights reserved.</p>
     </footer>
-    <script src="script.js"></script>
 </body>
 </html>
