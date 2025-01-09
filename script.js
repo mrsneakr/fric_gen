@@ -122,7 +122,6 @@ function renderLeaderboard() {
   });
 }
 
-// Funktionen für Charakter und Attribute
 // Globale Variable, um den aktuellen Rank zu speichern
 let currentRank = null;
 
@@ -131,7 +130,7 @@ function randomizeCharacter() {
     // Wenn der aktuelle Rank < 500 ist, zeige eine Bestätigungsabfrage an
     if (currentRank !== null && currentRank < 500) {
         const confirmReset = confirm(
-            `You have a high rank of ${currentRank}. Are you sure you want to randomize and lose this rank?`
+            `You have a high rank of ${currentRank} (rarer). Are you sure you want to randomize and lose this rank?`
         );
         if (!confirmReset) {
             // Wenn der Benutzer nicht zustimmt, breche den Vorgang ab
@@ -162,7 +161,8 @@ function calculateRank(assets) {
     const probabilities = Object.values(assets).map((asset) => rarityWeights[asset.rarity] / 100);
     const combinedProbability = probabilities.reduce((prod, prob) => prod * prob, 1);
 
-    const rank = Math.ceil(1 / combinedProbability);
+    // Umkehrung der Ränge: 1 ist der seltenste, größere Zahlen sind häufiger
+    const rank = Math.ceil(allCombinations.length * combinedProbability);
     return rank;
 }
 
@@ -182,13 +182,6 @@ function updateAttributes(assets, score, rank) {
     const scoreSection = document.querySelector(".score-section");
     scoreSection.innerHTML = `<div>Total Score: ${score}</div><div>Rank: ${rank} of ${allCombinations.length}</div>`;
 }
-
-document.getElementById("randomizeButton").addEventListener("click", randomizeCharacter);
-document.getElementById("downloadButton").addEventListener("click", downloadCharacterImage);
-
-// Initialisieren
-randomizeCharacter();
-renderLeaderboard();
 
 // Bild-Download mit Rank und Name
 function downloadCharacterImage() {
