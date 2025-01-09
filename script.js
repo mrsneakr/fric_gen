@@ -98,6 +98,15 @@ function getRank(selectedAssets) {
   return allCombinations.length; // Fallback
 }
 
+//CA kopieren
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        alert('Contract Address copied to clipboard!');
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+    });
+}
+
 // Leaderboard-Funktionen
 function updateLeaderboard(name, rank) {
   const leaderboardRef = ref(db, "leaderboard/");
