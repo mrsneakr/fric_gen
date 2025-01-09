@@ -130,7 +130,7 @@ function randomizeCharacter() {
     // Wenn der aktuelle Rank < 500 ist, zeige eine Bestätigungsabfrage an
     if (currentRank !== null && currentRank < 500) {
         const confirmReset = confirm(
-            `You have a high rank of ${currentRank}. Are you sure you want to randomize and lose this rank?`
+            `You have achieved a rare rank of ${currentRank}. Are you sure you want to randomize and lose this rank?`
         );
         if (!confirmReset) {
             // Wenn der Benutzer nicht zustimmt, breche den Vorgang ab
@@ -149,37 +149,29 @@ function randomizeCharacter() {
     }
 
     const score = calculateScore(selectedAssets);
-    currentRank = calculateRank(selectedAssets); // Speichere den neuen Rank in der globalen Variable
+    currentRank = getRank(selectedAssets); // Speichere den neuen Rank in der globalen Variable
     updateAttributes(selectedAssets, score, currentRank);
 }
 
 function calculateScore(assets) {
-    return Object.values(assets).reduce((score, asset) => score + rarityPoints[asset.rarity], 0);
-}
-
-function calculateRank(assets) {
-    const probabilities = Object.values(assets).map((asset) => rarityWeights[asset.rarity] / 100);
-    const combinedProbability = probabilities.reduce((prod, prob) => prod * prob, 1);
-
-    const rank = Math.ceil(1 / combinedProbability);
-    return rank;
+  return Object.values(assets).reduce((score, asset) => score + rarityPoints[asset.rarity], 0);
 }
 
 function updateAttributes(assets, score, rank) {
-    const attributesContainer = document.querySelector(".attributes");
-    attributesContainer.innerHTML = Object.entries(assets)
-        .map(
-            ([layer, asset]) =>
-                `<div class="attribute">
-                    <div class="name">${layer}</div>
-                    <div class="value">${asset.src.replace(".png", "")}</div>
-                    <div class="rarity ${rarityColors[asset.rarity]}">${asset.rarity.toUpperCase()}</div>
-                </div>`
-        )
-        .join("");
+  const attributesContainer = document.querySelector(".attributes");
+  attributesContainer.innerHTML = Object.entries(assets)
+    .map(
+      ([layer, asset]) =>
+        `<div class="attribute">
+          <div class="name">${layer}</div>
+          <div class="value">${asset.src.replace(".png", "")}</div>
+          <div class="rarity ${rarityColors[asset.rarity]}">${asset.rarity.toUpperCase()}</div>
+        </div>`
+    )
+    .join("");
 
-    const scoreSection = document.querySelector(".score-section");
-    scoreSection.innerHTML = `<div>Total Score: ${score}</div><div>Rank: ${rank} of ${allCombinations.length}</div>`;
+  const scoreSection = document.querySelector(".score-section");
+  scoreSection.innerHTML = `<div>Total Score: ${score}</div><div>Rank: ${rank} of ${allCombinations.length}</div>`;
 }
 
 // Bild-Download mit Rank und Name
