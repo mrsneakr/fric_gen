@@ -1,6 +1,17 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
+//test
+if (typeof splToken === "undefined") {
+    console.error("splToken is not defined. Please check the library loading.");
+} else {
+    console.log("splToken loaded:", splToken);
+}
+
+console.log(splToken.getOrCreateAssociatedTokenAccount);
+
+const connection = new solanaWeb3.Connection("https://api.mainnet-beta.solana.com");
+
 // Solana Web3.js CDN
 const solanaWeb3 = window.solanaWeb3; // Wird von CDN geladen
 
